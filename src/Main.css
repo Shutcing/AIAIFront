@@ -1,0 +1,55 @@
+.main {
+  min-height: 70%;
+}
+.main__container {
+  display: flex;
+  height: 100%;
+}
+
+.main__right {
+  width: 85%;
+}
+
+.main__left {
+  width: 15%;
+}
+
+/*--Layers--------------------------------*/
+.layers {
+  padding: 10% 0 0 0;
+  height: 100%;
+  flex-direction: column;
+  width: 90%;
+  border: 1px solid var(--color-one);
+  border-radius: 10px;
+  align-items: center;
+}
+
+.layers__title {
+  padding: 5% 0;
+}
+.layers__sep {
+  width: 80%;
+  height: 1px;
+  background: var(--color-one);
+}
+.layers__box {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0 10%;
+}
+.layers__layer {
+}
+.layer {
+  margin-top: 10%;
+  display: flex;
+  width: 100%;
+  justify-content: start;
+}
+.layer__icon {
+  margin-right: 10%;
+  cursor: pointer;
+}
+.layer__title {
+}

@@ -1,0 +1,72 @@
+/*-------ОБНУЛЕНИЕ------------------------------*/
+*,
+*::before,
+*::after {
+  padding: 0;
+  margin: 0;
+  border: 0;
+  box-sizing: border-box;
+}
+a {
+  text-decoration: none;
+}
+ul,
+ol,
+li {
+  list-style: none;
+}
+img {
+  vertical-align: top;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+html,
+body {
+  height: 100%;
+  line-height: 1;
+  font-size: 16px;
+  color: black;
+  overflow-x: hidden;
+}
+[class*="__container"] {
+  margin: 0 auto;
+  padding: 0 15px;
+  box-sizing: content-box;
+}
+/*--Variables-----------------------*/
+:root {
+  --color-one: #7965af;
+  --color-two: #6750a4;
+  --timeline-color: #e8def8;
+  --canvas-color: #f5f5f5;
+  --cursor-color: black;
+  --cursor-text-color: white;
+  --object-way-color: black;
+}
+
+* {
+  user-select: none; /* Для современных браузеров */
+  -webkit-user-select: none; /* Для Safari */
+  -moz-user-select: none; /* Для Firefox */
+  -ms-user-select: none; /* Для Internet Explorer/Edge */
+}
+
+/*----Общие стили----------------------------*/
+.button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100px;
+  width: 108px;
+  height: 40px;
+  color: white;
+  background: var(--color-two);
+  cursor: pointer;
+}

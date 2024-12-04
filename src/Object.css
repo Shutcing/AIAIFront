@@ -1,0 +1,12 @@
+.object {
+  width: "200px";
+  height: "300px";
+  margin: "10px";
+  cursor: pointer;
+  position: absolute;
+  z-index: 3;
+}
+
+.object:hover {
+  border: 1px solid black;
+}

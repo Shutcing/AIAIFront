@@ -1,0 +1,56 @@
+/* ----Personal lines----------------------------*/
+.personal-line__line {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background-color: black;
+}
+
+.personal-line__title {
+}
+
+.personal-line__algebra {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.algebra__left {
+  width: 1%;
+  height: 100%;
+  border-left: 5px solid black;
+  border-top: 5px solid black;
+  border-bottom: 5px solid black;
+  cursor: pointer;
+  position: absolute;
+  left: 0;
+  z-index: 4;
+}
+.algebra__right {
+  width: 1%;
+  height: 100%;
+  border-right: 5px solid black;
+  border-top: 5px solid black;
+  border-bottom: 5px solid black;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  z-index: 4;
+}
+
+.personal-line {
+  display: flex;
+  height: 30%;
+  align-items: center;
+  margin: 2% 0 0 0;
+}
+.timeline__personal {
+}
+
+/*-----Holder------------------------------*/
+.holder {
+  display: flex;
+  width: 100%;
+}

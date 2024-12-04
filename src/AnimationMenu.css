@@ -1,0 +1,52 @@
+.animationMenu {
+  padding: 10% 0 0 0;
+  height: 100%;
+  flex-direction: column;
+  width: 90%;
+  border: 1px solid var(--color-one);
+  border-radius: 10px;
+  align-items: center;
+}
+
+.animationMenu__title {
+  padding: 5% 0;
+}
+
+.animationMenu__sep {
+  width: 80%;
+  height: 1px;
+  background: var(--color-one);
+}
+
+.animationMenu__box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 5% 10%;
+}
+
+/*----Add Animation Block-------------------------------*/
+.addAnimationBlock {
+  position: relative;
+}
+
+.choosePanel {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+}
+
+.choosePanel__item {
+  padding: 10% 30%;
+  width: 150%;
+  background: var(--canvas-color);
+  display: flex;
+  justify-content: center;
+  border: 1px solid black;
+  cursor: pointer;
+}

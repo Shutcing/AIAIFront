@@ -1,0 +1,44 @@
+.animationWindow {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: #f0f0f0; /* Пример фона */
+  user-select: none; /* Отключает выделение текста */
+  overflow: hidden; /* Обрезает содержимое за пределами окна */
+}
+
+.sceneContent {
+  width: auto; /* Автоматическая ширина содержимого */
+  height: auto; /* Автоматическая высота содержимого */
+  position: absolute; /* Позиционирование для смещений */
+  will-change: transform; /* Оптимизация для трансформаций */
+}
+
+.animationWindowWrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  user-select: none; /* Отключает выделение текста */
+  z-index: 1;
+}
+
+/*-Animations Stuff---------------------*/
+
+.object__dot {
+  width: 20px;
+  height: 20px;
+  background: var(--object-way-color);
+  border-radius: 50%;
+  position: absolute;
+  z-index: 4;
+}
+
+.object__wayWrapper {
+  position: absolute;
+  z-index: 2;
+}
+
+.object__way {
+  position: absolute;
+  z-index: 4;
+}
