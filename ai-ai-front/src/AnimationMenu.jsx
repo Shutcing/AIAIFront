@@ -16,9 +16,12 @@ export function AnimationMenu() {
     setcurrentAnimationIndex,
     isReadyToMove,
     setIsReadyToMove,
+    animationTime,
   } = useContext(Context);
   const [isChoosePanelVisible, setisChoosePanelVisible] = useState(false);
-  // const [inputValue, setInputValue] = useState("");
+  const [animationsVariants, setAnimationVariants] = useState([
+    ["Движение", "linnear_move"],
+  ]);
 
   const showChoosePanel = () => {
     setisChoosePanelVisible(true);
@@ -53,10 +56,6 @@ export function AnimationMenu() {
     };
   });
 
-  // const handleChange = (e) => {
-  //   setInputValue(e.target.value)
-  // }
-
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.key == "Enter") {
@@ -70,6 +69,20 @@ export function AnimationMenu() {
 
     return () => window.removeEventListener("keydown", handleKeyPress);
   });
+
+  const animationNotLayered = (variant) => {
+    if (Object.keys(animationObjects).length == 0 || currentObjectId == null) {
+      return false;
+    }
+    return (
+      animationObjects[String(currentObjectId)][2].filter(
+        (animation) =>
+          animation.title == variant[0] &&
+          animationTime < animation.time.end &&
+          animationTime > animation.time.start
+      ).length == 0
+    );
+  };
 
   return (
     <>
@@ -99,19 +112,19 @@ export function AnimationMenu() {
             className="addAnimationBlock__choosePanel choosePanel"
             style={{ display: isChoosePanelVisible ? "flex" : "none" }}
           >
-            <li
-              className="choosePanel__item"
-              onClick={(e) => addNewAnimation(e, "linnear_move", "Движение")}
-            >
-              движение
-            </li>
-
-            <li
-              className="choosePanel__item"
-              onClick={(e) => addNewAnimation(e, "opacity", "Прозрачность")}
-            >
-              Прозрачность
-            </li>
+            {animationsVariants.map((variant, ind) => {
+              if (animationNotLayered(variant)) {
+                return (
+                  <li
+                    key={ind}
+                    className="choosePanel__item"
+                    onClick={(e) => addNewAnimation(e, variant[1], variant[0])}
+                  >
+                    {variant[0]}
+                  </li>
+                );
+              }
+            })}
           </ul>
           <div
             className="addAnimationBlock__addButton button"

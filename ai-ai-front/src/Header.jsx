@@ -14,8 +14,6 @@ export function Header() {
     animationObjects,
   } = useContext(Context);
 
-  const [isDownload, setIsDownload] = useState(false);
-
   const addPicture = () => {
     setIsAdd(!isAdd);
   };
@@ -25,18 +23,12 @@ export function Header() {
   };
 
   const saveVideo = (byteArray) => {
-    if (!isDownload) {
-      const videoBlob = new Blob([byteArray], { type: "video/mp4" });
-      const videoUrl = URL.createObjectURL(videoBlob);
-      const downloadLink = document.createElement("a");
-      downloadLink.href = videoUrl;
-      downloadLink.download = "video.mp4";
-      downloadLink.click();
-      setIsDownload(true);
-      setTimeout(() => {
-        setIsDownload(false);
-      }, 3000);
-    }
+    const videoBlob = new Blob([byteArray], { type: "video/mp4" });
+    const videoUrl = URL.createObjectURL(videoBlob);
+    const downloadLink = document.createElement("a");
+    downloadLink.href = videoUrl;
+    downloadLink.download = "video.mp4";
+    downloadLink.click();
   };
 
   function convertAnimationObjectsToJson(animationObjects) {
@@ -148,17 +140,24 @@ export function Header() {
 
   const _export = async () => {
     let json = convertAnimationObjectsToJson(animationObjects);
-    console.log(json);
     await startRender(imgFiles, json);
+
+    // Вводим флаг для предотвращения многократного вызова
+    let isDownloading = false;
+
     setTimeout(() => {
       let id = setInterval(async () => {
         let status = await checkVideo("test4");
-        if (status == "completed") {
+        if (status === "completed") {
           clearInterval(id);
-          let byteArray = await getVideo("test4");
-          saveVideo(byteArray);
+
+          if (!isDownloading) {
+            isDownloading = true;
+            let byteArray = await getVideo("test4");
+            saveVideo(byteArray);
+          }
         }
-      }, 2000);
+      }, 1000);
     }, 2000);
   };
 
