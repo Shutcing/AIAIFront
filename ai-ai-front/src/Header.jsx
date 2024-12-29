@@ -55,10 +55,11 @@ export function Header() {
     };
 
     const animationWindow = document.querySelector(".animationWindow");
+    let currentTime = getFormattedTime();
 
     const json = {
       animated_images: [],
-      name: "test4",
+      name: `videoTime_${currentTime}`,
       duration: 0,
       shape: [
         animationWindow.clientWidth * k,
@@ -145,38 +146,33 @@ export function Header() {
     // Вводим флаг для предотвращения многократного вызова
     let isDownloading = false;
 
-    setTimeout(() => {
-      let id = setInterval(async () => {
-        let status = await checkVideo("test4");
-        if (status === "completed") {
-          clearInterval(id);
+    let id = setInterval(async () => {
+      let status = await checkVideo(`videoTime_${currentTime}`);
+      if (status === "completed") {
+        clearInterval(id);
 
-          if (!isDownloading) {
-            isDownloading = true;
-            let byteArray = await getVideo("test4");
-            saveVideo(byteArray);
-          }
+        if (!isDownloading) {
+          isDownloading = true;
+          let byteArray = await getVideo("test4");
+          saveVideo(byteArray);
         }
-      }, 1000);
-    }, 2000);
+      }
+    }, 100);
   };
 
   return (
     <>
       <header className="header">
         <div className="header__container">
-          <div className="addPicture">
-            <div className="addPicture__text">Добавить картинку</div>
-            <div onClick={addPicture} className="addPicture__add">
-              +
-            </div>
+          <div className="logo">
+            <img src="./logo.png" alt="" />
           </div>
           <div className="saving">
-            <div onClick={save} className="save button">
+            {/* <div onClick={save} className="save button">
               Сохранить
-            </div>
+            </div> */}
             <div onClick={_export} className="export button">
-              Скачать
+              Экспорт
             </div>
           </div>
         </div>

@@ -22,16 +22,18 @@ export function Timeline() {
   const timeDots = [];
   const WIDTH = window.screen.width;
   const timeStep = WIDTH * 0.05;
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 17; i++) {
     timeDots.push(
       <div
-        className="timeDot"
+        // className="timeDot"
         key={i}
         style={{
-          padding: `${WIDTH * 0.003}px`,
+          // padding: `${WIDTH * 0.003}px`,
           margin: `0 ${timeStep - WIDTH * 0.006}px 0 0`,
         }}
-      ></div>
+      >
+        {i}
+      </div>
     );
   }
   const [cursorValue, setCursorValue] = useState(-WIDTH * 0.0125 + 5);
@@ -51,6 +53,23 @@ export function Timeline() {
     setInitialCursorValue(cursorValue); // Сохраняем текущее значение cursorValue
   };
 
+  // const makeTimeFromCursorValue = (value) => {
+  //   let time = ((value + WIDTH * 0.0125 - 5) / timeStep).toFixed(2);
+  //   if (time / 10 < 1) {
+  //     time = "0" + `${time}`;
+  //   }
+  //   return String(time);
+  // };
+
+  const makeTimeFormat = (time) => {
+    time = time.toFixed(2);
+    if (time / 10 < 1) {
+      time = `0${time}`;
+    }
+    time = time.replace(".", ":");
+    return time;
+  };
+
   // Перемещение курсора
   const handleMouseMove = (e) => {
     if (!isDragging) {
@@ -64,6 +83,7 @@ export function Timeline() {
     let newValue = initialCursorValue + deltaX;
     setAnimationTime(Math.max((newValue + WIDTH * 0.0125 - 5) / timeStep, 0));
     newValue = newValue >= -WIDTH * 0.0125 + 5 ? newValue : -WIDTH * 0.0125 + 5;
+    newValue = Math.min(newValue, WIDTH - timeStep * 3);
     setCursorValue(newValue);
   };
 
@@ -94,14 +114,16 @@ export function Timeline() {
     } else {
       setIsPlaying(true);
       for (let key of Object.keys(animationObjects)) {
-        let objectAnimation = animationObjects[key][2][0];
-        if (objectAnimation.states) {
-          let x = objectAnimation.states.start[0];
-          let y = objectAnimation.states.start[1];
+        try {
+          let objectAnimation = animationObjects[key][2][0];
+          if (objectAnimation.states) {
+            let x = objectAnimation.states.start[0];
+            let y = objectAnimation.states.start[1];
 
-          let objWrapper = document.querySelector(`#o${key}`);
-          objWrapper.style.transform = `translate(${x}px, ${y}px)`;
-        }
+            let objWrapper = document.querySelector(`#o${key}`);
+            objWrapper.style.transform = `translate(${x}px, ${y}px)`;
+          }
+        } catch {}
       }
 
       let x = -WIDTH * 0.0125 + 5;
@@ -109,6 +131,7 @@ export function Timeline() {
         setCursorValue(x);
         setAnimationTime(Math.max((x + WIDTH * 0.0125 - 5) / timeStep, 0));
         x += timeStep / 100;
+        x %= WIDTH - timeStep * 3;
       }, 10);
       setAnimationId(id);
     }
@@ -117,31 +140,44 @@ export function Timeline() {
   return (
     <div className="timeline">
       <div className="timeline__container">
-        <div className="timeline__play">
-          <div className="play" onClick={toggleAnimation}>
-            <img
-              src={isPlaying ? "./playSquare.svg" : "./playTriangle.svg"}
-              alt=""
-            />
-          </div>
-        </div>
-        <div
-          className="timeline__line"
-          style={{
-            margin: `0 0 0 ${timeStep}px`,
-          }}
-        >
+        <div className="timeline__NonPersonal">
           <div
-            className="timeline__cursor cursor"
-            onMouseDown={handleMouseDown}
-            style={{ left: `${cursorValue}px` }}
+            className="timeline__play"
+            style={{ width: `${timeStep}px`, marginTop: `-${timeStep / 4}px` }}
           >
-            <div className="cursor__value">
-              {((cursorValue + WIDTH * 0.0125 - 5) / timeStep).toFixed(2)}
+            <div className="play" onClick={toggleAnimation}>
+              <img
+                src={isPlaying ? "./playSquare.svg" : "./playTriangle.svg"}
+                alt=""
+              />
             </div>
-            <div className="cursor__dash"></div>
           </div>
-          {timeDots}
+          <div
+            className="timeline__numbers"
+            style={{ position: `absolute`, left: `${timeStep}px` }}
+          >
+            {makeTimeFormat(animationTime)}
+          </div>
+          <div
+            className="timeline__line"
+            style={{
+              margin: `0 0 0 ${timeStep * 2}px`,
+              width: `${timeStep * 17.2}px`,
+            }}
+          >
+            <div
+              className="timeline__cursor cursor"
+              onMouseDown={handleMouseDown}
+              style={{ left: `${cursorValue}px` }}
+            >
+              <div className="cursor__value">
+                {/* {((cursorValue + WIDTH * 0.0125 - 5) / timeStep).toFixed(2)} */}
+                <img src="./timeCursor.svg" alt="" />
+              </div>
+              <div className="cursor__dash"></div>
+            </div>
+            {timeDots}
+          </div>
         </div>
         <div className="timeline__box">
           {selectedImages.map((layerTitle, ind) => (

@@ -7,6 +7,8 @@
 }
 
 .personal-line__title {
+  padding: 1%;
+  background: var(--timeline-color);
 }
 
 .personal-line__algebra {

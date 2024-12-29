@@ -9,4 +9,14 @@
   cursor: pointer;
   position: absolute;
   z-index: 3;
+  overflow: hidden;
+}
+
+.holder__delete {
+  padding: 10px;
+  position: absolute;
+  border-radius: 10px;
+  z-index: 10;
+  background: var(--red-color);
+  cursor: pointer;
 }

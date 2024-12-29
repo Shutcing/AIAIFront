@@ -23,6 +23,7 @@ export const Provider = ({ children }) => {
         [],
         0, //summTimelineBlocksDistance
         name,
+        1, //opacity
       ],
     }));
 

@@ -12,9 +12,10 @@ export function PersonalLine({ marginLeft, name, id }) {
     setcurrentAnimationIndex,
   } = useContext(Context);
   const [width, setWidth] = useState(window.screen.width);
+  const timeStep = width * 0.05;
   const [cursorValues, setCursorValues] = useState({
     left: 0,
-    right: 0,
+    right: timeStep,
   });
   const [dragging, setDragging] = useState({
     isDragging: false,
@@ -22,8 +23,6 @@ export function PersonalLine({ marginLeft, name, id }) {
     startX: 0,
     initialValue: 0,
   });
-
-  const timeStep = width * 0.05;
 
   const updateWidth = useCallback(() => setWidth(window.innerWidth), []);
 
@@ -52,6 +51,9 @@ export function PersonalLine({ marginLeft, name, id }) {
       let newValue = dragging.initialValue + deltaX;
 
       newValue = Math.max(0, newValue);
+      if (dragging.side === "right") {
+        newValue = Math.max(timeStep, newValue);
+      }
       if (dragging.side === "left") {
         newValue = Math.min(
           newValue,
@@ -63,7 +65,7 @@ export function PersonalLine({ marginLeft, name, id }) {
           newValue,
           width * 0.96 - marginLeft - cursorValues.left - 1
         );
-        animationObjects[String(id)][0][1] = newValue / timeStep;
+        animationObjects[String(id)][0][1] = (newValue + timeStep) / timeStep;
       }
 
       setCursorValues((prevValues) => ({
@@ -95,13 +97,13 @@ export function PersonalLine({ marginLeft, name, id }) {
 
   return (
     <div className="timeline__personal personal-line">
-      <div
+      {/* <div
         className="personal-line__line"
         style={{ margin: `0 0 0 ${marginLeft}px` }}
-      ></div>
+      ></div> */}
       <div
         className="personal-line__title"
-        style={{ width: `${width * 0.04}px` }}
+        style={{ width: `${timeStep * 2}px` }}
       >
         {name}
       </div>

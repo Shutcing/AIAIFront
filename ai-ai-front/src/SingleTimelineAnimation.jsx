@@ -17,9 +17,20 @@ export function SingleTimelineAnimation({ title, index, objectId }) {
 
   const [width, setWidth] = useState(1);
   const [marginLeft, setMarginLeft] = useState(0);
+  const [isDeletePanelShow, setIsDeletePanelShow] = useState(false);
+
+  const deleteAnimation = (event) => {
+    let newAnimationObjects = { ...animationObjects };
+    newAnimationObjects[String(objectId)][2] = newAnimationObjects[
+      String(objectId)
+    ][2].filter((_, i) => i != index);
+    console.log(newAnimationObjects);
+    setcurrentAnimationIndex(null);
+    setAnimationObjects(newAnimationObjects);
+  };
 
   const chooseThisAnimation = () => {
-    setcurrentAnimationIndex(thisIndex);
+    setIsDeletePanelShow(!isDeletePanelShow);
   };
 
   useEffect(() => {
@@ -38,12 +49,23 @@ export function SingleTimelineAnimation({ title, index, objectId }) {
         );
       } else {
         console.log(index, currentAnimationIndex, isReadyToMove[objectId]);
+        console.log(isReadyToMove);
       }
     } catch {}
   }, [animationObjects]);
 
   return (
-    <>
+    <div id={`animation${index}and${objectId}`}>
+      <div
+        className="holder__delete"
+        onClick={deleteAnimation}
+        style={{
+          display: isDeletePanelShow ? "flex" : "none",
+          transform: `translate(100%,  -70%)`,
+        }}
+      >
+        Удалить
+      </div>
       <div
         onClick={chooseThisAnimation}
         style={{
@@ -54,6 +76,6 @@ export function SingleTimelineAnimation({ title, index, objectId }) {
       >
         {title}
       </div>
-    </>
+    </div>
   );
 }

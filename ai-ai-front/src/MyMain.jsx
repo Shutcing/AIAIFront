@@ -2,7 +2,6 @@ import "./Main.css";
 import "./Zero.css";
 import { useContext, useEffect, useState } from "react";
 import { Context } from "./Context.jsx";
-import { AnimationMenu } from "./AnimationMenu.jsx";
 import { Object as _Object } from "./Object.jsx";
 import { Scene } from "./Scene.jsx";
 
@@ -21,6 +20,10 @@ export function Main() {
     setImgFiles,
   } = useContext(Context);
   const layers = [];
+
+  const addPicture = () => {
+    setIsAdd(!isAdd);
+  };
 
   // Открытие проводника файлов и сохранение изображения
   const openFilePicker = () => {
@@ -55,25 +58,26 @@ export function Main() {
     <div className="main">
       <div className="main__container">
         <div className="main__left">
-          <div
-            className="layers"
-            style={{ display: currentObjectId == null ? "flex" : "none" }}
-          >
-            <div className="layers__title">Canvas</div>
+          <div className="layers" style={{ display: "flex" }}>
+            <div className="layers__title">Объекты</div>
             <div className="layers__sep" />
+            <div className="addPicture">
+              <div className="addPicture__text">Добавить картинку</div>
+              <div onClick={addPicture} className="addPicture__add">
+                +
+              </div>
+            </div>
             <div className="layers__box">
               {selectedImages.map((layerTitle, ind) => (
                 <div className="layers__layer layer" key={ind}>
                   <div className="layer__icon">
-                    <img src="./Star.svg" alt="" />
+                    <img src="./ellipse.svg" alt="" />
                   </div>
                   <div className="layer__title">object {ind}</div>
                 </div>
               ))}
             </div>
           </div>
-
-          <AnimationMenu></AnimationMenu>
         </div>
         <div className="main__right">
           <Scene selectedImages={selectedImages}></Scene>

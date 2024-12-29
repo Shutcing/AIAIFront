@@ -1,6 +1,7 @@
 import "./Scene.css";
 import "./Zero.css";
 import { useContext, useState, useRef, useCallback } from "react";
+import { AnimationMenu } from "./AnimationMenu.jsx";
 import { Context } from "./Context.jsx";
 import { Object as _Object } from "./Object.jsx";
 
@@ -113,7 +114,10 @@ export function Scene({ selectedImages }) {
 
   const setCurrentObjectIdNull = (e) => {
     console.log(e.target);
-    if (e.target.className != "object") {
+    if (
+      e.target.className != "object" &&
+      e.target.className != "choosePanel__item"
+    ) {
       setCurrentObjectId(null);
     }
   };
@@ -141,6 +145,29 @@ export function Scene({ selectedImages }) {
           transformOrigin: "0 0",
         }}
       >
+        <div
+          className="sceneContent"
+          style={{
+            transform: `translate(${
+              animationObjects[String(currentObjectId)]?.[1]?.[0] || 0
+            }px, ${
+              animationObjects[String(currentObjectId)]?.[1]?.[1] || 0
+            }px)`,
+            transformOrigin: "0 0",
+            position: "absolute",
+          }}
+        >
+          <AnimationMenu
+            scale={scale}
+            currentObj={
+              document.querySelector(`#o${currentObjectId}`) != null
+                ? document
+                    .querySelector(`#o${currentObjectId}`)
+                    .children[0].getBoundingClientRect()
+                : { width: 0, height: 0 }
+            }
+          ></AnimationMenu>
+        </div>
         {selectedImages.map((image, index) => {
           return (
             <>
