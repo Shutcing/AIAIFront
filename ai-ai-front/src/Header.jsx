@@ -14,6 +14,9 @@ export function Header() {
     animationObjects,
   } = useContext(Context);
 
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isExporting, setIsExporting] = useState(false); // Состояние для анимации кнопки
+
   const addPicture = () => {
     setIsAdd(!isAdd);
   };
@@ -55,7 +58,7 @@ export function Header() {
     };
 
     const animationWindow = document.querySelector(".animationWindow");
-    let currentTime = getFormattedTime();
+    setCurrentTime(getFormattedTime());
 
     const json = {
       animated_images: [],
@@ -140,6 +143,7 @@ export function Header() {
   }
 
   const _export = async () => {
+    setIsExporting(true); // Запускаем анимацию кнопки
     let json = convertAnimationObjectsToJson(animationObjects);
     await startRender(imgFiles, json);
 
@@ -153,8 +157,9 @@ export function Header() {
 
         if (!isDownloading) {
           isDownloading = true;
-          let byteArray = await getVideo("test4");
+          let byteArray = await getVideo(`videoTime_${currentTime}`);
           saveVideo(byteArray);
+          setIsExporting(false); // Останавливаем анимацию кнопки
         }
       }
     }, 100);
@@ -171,8 +176,11 @@ export function Header() {
             {/* <div onClick={save} className="save button">
               Сохранить
             </div> */}
-            <div onClick={_export} className="export button">
-              Экспорт
+            <div
+              onClick={_export}
+              className={`export button ${isExporting ? "exporting" : ""}`}
+            >
+              {isExporting ? "Экспортируется..." : "Экспорт"}
             </div>
           </div>
         </div>

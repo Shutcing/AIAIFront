@@ -29,4 +29,9 @@
   margin: 0 10% 0 0;
 }
 
+.exporting {
+  width: 150px;
+  background: var(--red-color);
+}
+
 /*----------------------------------*/
