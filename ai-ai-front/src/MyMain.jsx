@@ -1,6 +1,6 @@
 import "./Main.css";
 import "./Zero.css";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Context } from "./Context.jsx";
 import { Scene } from "./Scene.jsx";
 
@@ -19,6 +19,9 @@ export function Main() {
     sceneColor,
     setSceneColor,
   } = useContext(Context);
+
+  // Cостояние для показа/скрытия уведомления
+  const [showNotification, setShowNotification] = useState(true);
 
   const addPicture = () => {
     setIsAdd(!isAdd);
@@ -39,7 +42,6 @@ export function Main() {
           const imgH = tempImg.height;
 
           setSelectedImages((prevImages) => [...prevImages, imageUrl]);
-
           setImgFiles((prevImages) => [...prevImages, file]);
           addIsReadyToMove(false);
 
@@ -70,7 +72,6 @@ export function Main() {
   };
 
   const openColorPicker = async (e) => {
-    let pickerBtn = e.target;
     return await new Promise((resolve) => {
       const colorInput = document.createElement("input");
       colorInput.type = "color";
@@ -87,21 +88,35 @@ export function Main() {
 
   function hexToRgb(hex) {
     hex = hex.replace(/^#/, "");
-
     const bigint = parseInt(hex, 16);
     const r = (bigint >> 16) & 255;
     const g = (bigint >> 8) & 255;
     const b = bigint & 255;
-
     return `rgb(${r}, ${g}, ${b})`;
   }
 
   return (
     <div className="main">
+      {/** Уведомление, которое появляется при загрузке страницы */}
+      {showNotification && (
+        <div className="notification">
+          <div
+            className="notification__close"
+            onClick={() => setShowNotification(false)}
+          >
+            ✕
+          </div>
+          <div className="notification__content">
+            <p>После добавления анимации, нажимайте Enter</p>
+            <p>Чтобы снять выделение с объекта, нажмите Enter :)</p>
+          </div>
+        </div>
+      )}
+
       <div className="main__container">
         <div className="main__left">
           <div className="sceneColor">
-            <div className="sceneColor__title">Цвет фона: </div>
+            <div className="sceneColor__title">Цвет фона:</div>
             <div
               className="sceneColor__color"
               onClick={changeSceneColor}

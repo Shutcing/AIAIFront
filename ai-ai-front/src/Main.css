@@ -107,3 +107,41 @@
   border: 3px solid var(--color-one);
   border-radius: 5px;
 }
+
+/*---Обучающее уведомление---------------------------------*/
+.notification {
+  position: absolute;
+  top: 40%; /* Немного выше середины экрана */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.8); /* Полупрозрачный фон */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.8s ease-in-out;
+  max-width: 300px;
+  text-align: center;
+  z-index: 9999; /* Чтобы окно не перекрывалось другими элементами */
+}
+
+.notification__close {
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: right;
+}
+
+.notification__content p {
+  margin: 0.5em 0;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
