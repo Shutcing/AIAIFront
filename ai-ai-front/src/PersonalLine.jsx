@@ -80,6 +80,23 @@ export function PersonalLine({ marginLeft, name, id }) {
     setDragging({ isDragging: false, side: null, startX: 0, initialValue: 0 });
   };
 
+  const findPersomalLineMarginTop = () => {
+    if (id == 0) {
+      return `2%`;
+    }
+    return `${
+      document.querySelectorAll(`.personal-line`) &&
+      document.querySelector(".holder__row") &&
+      document.querySelectorAll(`.personal-line`)[id]
+        ? document
+            .querySelectorAll(`.personal-line`)
+            [id].querySelectorAll(".holder__row").length *
+          document.querySelector(".holder__row").clientHeight *
+          0.2
+        : 0
+    }px`;
+  };
+
   useEffect(() => {
     if (dragging.isDragging) {
       window.addEventListener("mousemove", handleMouseMove);
@@ -96,7 +113,12 @@ export function PersonalLine({ marginLeft, name, id }) {
   }, [dragging.isDragging, handleMouseMove]);
 
   return (
-    <div className="timeline__personal personal-line">
+    <div
+      className="timeline__personal personal-line"
+      style={{
+        marginTop: findPersomalLineMarginTop(),
+      }}
+    >
       {/* <div
         className="personal-line__line"
         style={{ margin: `0 0 0 ${marginLeft}px` }}
@@ -114,22 +136,76 @@ export function PersonalLine({ marginLeft, name, id }) {
         <div
           className="algebra__left"
           onMouseDown={(e) => handleMouseDown(e, "left")}
-          style={{ left: `${cursorValues.left}px` }}
+          style={{
+            left: `${cursorValues.left}px`,
+            height: `${
+              document.querySelector(".holder__row") &&
+              document.querySelector(".holder__row") &&
+              document.querySelectorAll(`.personal-line`)[id]
+                ? document
+                    .querySelectorAll(`.personal-line`)
+                    [id].querySelectorAll(".holder__row").length *
+                  document.querySelector(".holder__row").clientHeight
+                : 0
+            }px`,
+          }}
         ></div>
         <div className="algebra__holder holder">
-          {animationObjects[String(id)][2].map((animation, ind) => (
-            <SingleTimelineAnimation
-              key={ind}
-              title={animation.title}
-              index={ind}
-              objectId={id}
-            ></SingleTimelineAnimation>
-          ))}
+          {[
+            ...new Set(
+              animationObjects[String(id)][2].map(
+                (animation, ind) => animation.type
+              )
+            ),
+          ].map((type, i) => {
+            return (
+              <div className="holder__row">
+                {animationObjects[String(id)][2].map((animation, ind) => {
+                  console.log(animation.type, type);
+                  if (animation.type == type)
+                    return (
+                      <SingleTimelineAnimation
+                        key={ind}
+                        title={animation.title}
+                        index={ind}
+                        objectId={id}
+                      ></SingleTimelineAnimation>
+                    );
+                })}
+              </div>
+            );
+          })}
+
+          {/* <div className="holder__row">
+            {animationObjects[String(id)][2].map((animation, ind) => {
+              if (animation.type == "opacity")
+                return (
+                  <SingleTimelineAnimation
+                    key={ind}
+                    title={animation.title}
+                    index={ind}
+                    objectId={id}
+                  ></SingleTimelineAnimation>
+                );
+            })}
+          </div> */}
         </div>
         <div
           className="algebra__right"
           onMouseDown={(e) => handleMouseDown(e, "right")}
-          style={{ right: `${cursorValues.right}px` }}
+          style={{
+            right: `${cursorValues.right}px`,
+            height: `${
+              document.querySelector(".holder__row") &&
+              document.querySelector(".holder__row").clientHeight &&
+              document.querySelectorAll(`.personal-line`)[id]
+                ? document
+                    .querySelectorAll(`.personal-line`)
+                    [id].querySelectorAll(".holder__row").length *
+                  document.querySelector(".holder__row").clientHeight
+                : 0
+            }px`,
+          }}
         ></div>
       </div>
     </div>

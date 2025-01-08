@@ -10,3 +10,32 @@
 .object:hover {
   border: 1px solid black;
 }
+
+/*--Масштаб---------------------------------------------------*/
+.object__dotsWrapper {
+  position: relative;
+}
+.object__sizeDot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  z-index: 999;
+}
+.dotTopLeft {
+  top: 0;
+  left: 0;
+}
+.dotTopRight {
+  top: 0;
+  right: 0;
+}
+
+.dotBottomLeft {
+  bottom: 0;
+  left: 0;
+}
+
+.dotBottomRight {
+  bottom: 0;
+  right: 0;
+}

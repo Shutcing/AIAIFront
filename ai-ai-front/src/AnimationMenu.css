@@ -4,6 +4,8 @@
   flex-direction: column;
   width: 100%;
   align-items: center;
+  z-index: 9999;
+  position: absolute;
 }
 
 .animationMenu__title {
@@ -36,14 +38,13 @@
   justify-content: center;
   top: 0;
   left: 0;
-  background: var(--canvas-color);
 }
 
 .choosePanel__item {
   display: flex;
   justify-content: center;
   cursor: pointer;
-  border: 1px solid black;
   padding: 5% 10%;
   border-radius: 10px;
+  background: var(--timeline-color);
 }

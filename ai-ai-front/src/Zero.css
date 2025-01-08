@@ -55,10 +55,10 @@ body {
 }
 
 * {
-  user-select: none; /* Для современных браузеров */
-  -webkit-user-select: none; /* Для Safari */
-  -moz-user-select: none; /* Для Firefox */
-  -ms-user-select: none; /* Для Internet Explorer/Edge */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 /*----Общие стили----------------------------*/

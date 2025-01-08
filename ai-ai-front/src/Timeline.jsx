@@ -25,10 +25,8 @@ export function Timeline() {
   for (let i = 0; i < 17; i++) {
     timeDots.push(
       <div
-        // className="timeDot"
         key={i}
         style={{
-          // padding: `${WIDTH * 0.003}px`,
           margin: `0 ${timeStep - WIDTH * 0.006}px 0 0`,
         }}
       >
@@ -37,29 +35,20 @@ export function Timeline() {
     );
   }
   const [cursorValue, setCursorValue] = useState(-WIDTH * 0.0125 + 5);
-  const [isDragging, setIsDragging] = useState(false); // Отслеживание состояния перетаскивания
-  const [startX, setStartX] = useState(0); // Начальная позиция мыши
-  const [initialCursorValue, setInitialCursorValue] = useState(0); // Начальное значение
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [initialCursorValue, setInitialCursorValue] = useState(0);
 
   function roundTo(num, decimals) {
     const factor = Math.pow(10, decimals);
     return Math.round(num * factor) / factor;
   }
 
-  // Начало перетаскивания
   const handleMouseDown = (e) => {
     setIsDragging(true);
-    setStartX(e.clientX); // Сохраняем начальную позицию мыши
-    setInitialCursorValue(cursorValue); // Сохраняем текущее значение cursorValue
+    setStartX(e.clientX);
+    setInitialCursorValue(cursorValue);
   };
-
-  // const makeTimeFromCursorValue = (value) => {
-  //   let time = ((value + WIDTH * 0.0125 - 5) / timeStep).toFixed(2);
-  //   if (time / 10 < 1) {
-  //     time = "0" + `${time}`;
-  //   }
-  //   return String(time);
-  // };
 
   const makeTimeFormat = (time) => {
     time = time.toFixed(2);
@@ -70,16 +59,13 @@ export function Timeline() {
     return time;
   };
 
-  // Перемещение курсора
   const handleMouseMove = (e) => {
     if (!isDragging) {
       return;
     }
 
-    // Разница в позициях мыши
     const deltaX = e.clientX - startX;
 
-    // Обновляем значение cursorValue на основе deltaX
     let newValue = initialCursorValue + deltaX;
     setAnimationTime(Math.max((newValue + WIDTH * 0.0125 - 5) / timeStep, 0));
     newValue = newValue >= -WIDTH * 0.0125 + 5 ? newValue : -WIDTH * 0.0125 + 5;
@@ -87,7 +73,6 @@ export function Timeline() {
     setCursorValue(newValue);
   };
 
-  // Завершение перетаскивания
   const handleMouseUp = () => {
     setIsDragging(false);
   };
@@ -171,7 +156,6 @@ export function Timeline() {
               style={{ left: `${cursorValue}px` }}
             >
               <div className="cursor__value">
-                {/* {((cursorValue + WIDTH * 0.0125 - 5) / timeStep).toFixed(2)} */}
                 <img src="./timeCursor.svg" alt="" />
               </div>
               <div className="cursor__dash"></div>

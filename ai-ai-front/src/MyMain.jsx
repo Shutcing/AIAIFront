@@ -1,8 +1,7 @@
 import "./Main.css";
 import "./Zero.css";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { Context } from "./Context.jsx";
-import { Object as _Object } from "./Object.jsx";
 import { Scene } from "./Scene.jsx";
 
 export function Main() {
@@ -14,18 +13,17 @@ export function Main() {
     animationObjects,
     addAnimationObjects,
     setAnimationObjects,
-    currentObjectId,
     addIsReadyToMove,
     imgFiles,
     setImgFiles,
+    sceneColor,
+    setSceneColor,
   } = useContext(Context);
-  const layers = [];
 
   const addPicture = () => {
     setIsAdd(!isAdd);
   };
 
-  // Открытие проводника файлов и сохранение изображения
   const openFilePicker = () => {
     const input = document.createElement("input");
     input.type = "file";
@@ -34,14 +32,26 @@ export function Main() {
       const file = event.target.files[0];
       if (file) {
         const imageUrl = URL.createObjectURL(file);
-        setSelectedImages((prevImages) => [...prevImages, imageUrl]);
-        setImgFiles((prevImages) => [...prevImages, file]);
-        addIsReadyToMove(false);
-        addAnimationObjects(
-          String(Object.keys(animationObjects).length),
-          file.name
-        ); // Добавляем новое изображение к массиву
-        console.log(animationObjects);
+
+        const tempImg = new Image();
+        tempImg.onload = () => {
+          const imgW = tempImg.width;
+          const imgH = tempImg.height;
+
+          setSelectedImages((prevImages) => [...prevImages, imageUrl]);
+
+          setImgFiles((prevImages) => [...prevImages, file]);
+          addIsReadyToMove(false);
+
+          addAnimationObjects(
+            String(Object.keys(animationObjects).length),
+            file.name,
+            imgW,
+            imgH
+          );
+          console.log(animationObjects);
+        };
+        tempImg.src = imageUrl;
       }
     };
     input.click();
@@ -54,10 +64,52 @@ export function Main() {
     }
   }, [isAdd]);
 
+  const changeSceneColor = async (e) => {
+    let color = await openColorPicker(e);
+    setSceneColor(color);
+  };
+
+  const openColorPicker = async (e) => {
+    let pickerBtn = e.target;
+    return await new Promise((resolve) => {
+      const colorInput = document.createElement("input");
+      colorInput.type = "color";
+
+      colorInput.addEventListener("change", () => {
+        const hexColor = colorInput.value;
+        const rgbColor = hexToRgb(hexColor);
+        resolve(rgbColor);
+      });
+
+      colorInput.click();
+    });
+  };
+
+  function hexToRgb(hex) {
+    hex = hex.replace(/^#/, "");
+
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+
+    return `rgb(${r}, ${g}, ${b})`;
+  }
+
   return (
     <div className="main">
       <div className="main__container">
         <div className="main__left">
+          <div className="sceneColor">
+            <div className="sceneColor__title">Цвет фона: </div>
+            <div
+              className="sceneColor__color"
+              onClick={changeSceneColor}
+              style={{
+                background: `${sceneColor}`,
+              }}
+            ></div>
+          </div>
           <div className="layers" style={{ display: "flex" }}>
             <div className="layers__title">Объекты</div>
             <div className="layers__sep" />

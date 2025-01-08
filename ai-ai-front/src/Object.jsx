@@ -1,6 +1,6 @@
 import "./Object.css";
 import "./Zero.css";
-import { useContext, useEffect, useState, useCallback } from "react";
+import { useContext, useEffect, useState, useCallback, useRef } from "react";
 import { Context } from "./Context.jsx";
 
 export function Object({ index, src }) {
@@ -17,18 +17,129 @@ export function Object({ index, src }) {
     isPlaying,
     setIsReadyToMove,
   } = useContext(Context);
+
   const [width, setWidth] = useState(window.screen.width);
+
+  const [draggingDot, setDraggingDot] = useState(null);
+
+  const initialRect = useRef({
+    x: 0,
+    y: 0,
+    width: 0,
+    height: 0,
+    mouseX: 0,
+    mouseY: 0,
+  });
+
+  const handleMouseDownDot = (e, dotName) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setDraggingDot(dotName);
+
+    initialRect.current = {
+      x: animationObjects[String(index)][1][0],
+      y: animationObjects[String(index)][1][1],
+      width: animationObjects[String(index)][6],
+      height: animationObjects[String(index)][7],
+      mouseX: e.clientX,
+      mouseY: e.clientY,
+    };
+  };
+
+  useEffect(() => {
+    const onMouseMove = (e) => {
+      if (!draggingDot) return;
+
+      const {
+        x,
+        y,
+        width: startW,
+        height: startH,
+        mouseX,
+        mouseY,
+      } = initialRect.current;
+
+      const dx = e.clientX - mouseX;
+      const dy = e.clientY - mouseY;
+
+      let newX = x;
+      let newY = y;
+      let newW = startW;
+      let newH = startH;
+
+      switch (draggingDot) {
+        case "topLeft":
+          newX = x + dx;
+          newY = y + dy;
+          newW = startW - dx;
+          newH = startH - dy;
+          break;
+
+        case "topRight":
+          newY = y + dy;
+          newW = startW + dx;
+          newH = startH - dy;
+          break;
+
+        case "bottomLeft":
+          newX = x + dx;
+          newW = startW - dx;
+          newH = startH + dy;
+          break;
+
+        case "bottomRight":
+          newW = startW + dx;
+          newH = startH + dy;
+          break;
+
+        default:
+          break;
+      }
+
+      if (newW < 5) {
+        newW = 5;
+      }
+      if (newH < 5) {
+        newH = 5;
+      }
+
+      const newAnimationObjects = { ...animationObjects };
+      newAnimationObjects[String(index)][1][0] = newX;
+      newAnimationObjects[String(index)][1][1] = newY;
+      newAnimationObjects[String(index)][6] = newW;
+      newAnimationObjects[String(index)][7] = newH;
+
+      setAnimationObjects(newAnimationObjects);
+    };
+
+    const onMouseUp = () => {
+      if (draggingDot) {
+        setDraggingDot(null);
+      }
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+    };
+  }, [draggingDot, animationObjects, setAnimationObjects, index]);
 
   const updateWidth = useCallback(() => setWidth(window.innerWidth), []);
 
   useEffect(() => {
     let objWrapper = document.querySelector(`#o${index}`);
-    if (
-      !objWrapper ||
-      !animationObjects[String(index)][2] ||
-      currentAnimationIndex != null
-    )
+    if (!objWrapper || !animationObjects[String(index)][2]) {
+      console.log(
+        objWrapper,
+        animationObjects[String(index)][2],
+        currentAnimationIndex
+      );
       return;
+    }
 
     let animations = animationObjects[String(index)][2];
     animations.sort((a, b) => a.time.start - b.time.start);
@@ -51,7 +162,6 @@ export function Object({ index, src }) {
           objWrapper.style.opacity = currentOpacity;
           animationObjects[String(index)][5] = currentOpacity;
         }
-        break;
       }
 
       if (animationTime < timeStart) {
@@ -60,7 +170,6 @@ export function Object({ index, src }) {
         } else if (animation.type === "opacity") {
           objWrapper.style.opacity = start;
         }
-        break;
       } else if (animationTime > timeEnd) {
         if (animation.type === "linnear_move") {
           objWrapper.style.transform = `translate(${end[0]}px, ${end[1]}px)`;
@@ -127,38 +236,18 @@ export function Object({ index, src }) {
         setTimeout(() => {
           setAnimationTime(animationTime);
         }, 100);
-        // const firstAnimation = animationObjects[String(index)][2][0];
-        // if (firstAnimation) {
-        //   const { start } = firstAnimation.states;
-        //   if (firstAnimation.type === "linnear_move") {
-        //     objWrapper.style.transform = `translate(${start[0]}px, ${start[1]}px)`;
-        //   } else if (firstAnimation.type === "opacity") {
-        //     objWrapper.style.opacity = start;
-        //   }
-        // }
+        const firstAnimation = animationObjects[String(index)][2][0];
+        if (firstAnimation) {
+          const { start } = firstAnimation.states;
+          if (firstAnimation.type === "linnear_move") {
+            objWrapper.style.transform = `translate(${start[0]}px, ${start[1]}px)`;
+          } else if (firstAnimation.type === "opacity") {
+            objWrapper.style.opacity = start;
+          }
+        }
       } catch {}
     }
   }, [isPlaying]);
-
-  // useEffect(() => {
-  //   const handleClick = (e) => {
-  //     if (
-  //       !e.target.classList.contains("object") &&
-  //       !e.target.classList.contains("cursor") &&
-  //       !e.target.classList.contains("choosePanel__item") &&
-  //       !e.target.classList.contains("cursor__value")
-  //     ) {
-  //       console.log(e.target);
-
-  //     }
-  //   };
-
-  //   document.addEventListener("click", handleClick);
-
-  //   return () => {
-  //     document.removeEventListener("click", handleClick);
-  //   };
-  // });
 
   useEffect(() => {
     if (
@@ -168,7 +257,7 @@ export function Object({ index, src }) {
     ) {
       let animation = animationObjects[String(index)][2][currentAnimationIndex];
 
-      if (animation.type == "linnear_move") {
+      if (animation.type === "linnear_move") {
         let newAnimationObjects = { ...animationObjects };
         newAnimationObjects[String(index)][2][
           currentAnimationIndex
@@ -183,7 +272,7 @@ export function Object({ index, src }) {
         newAnimationObjects[String(index)][2][currentAnimationIndex].time.end =
           animationTime;
         setAnimationObjects(newAnimationObjects);
-      } else if (animation.type == "opacity") {
+      } else if (animation.type === "opacity") {
         let newAnimationObjects = { ...animationObjects };
         newAnimationObjects[String(index)][2][
           currentAnimationIndex
@@ -201,15 +290,11 @@ export function Object({ index, src }) {
       }
 
       let newIsReadyToMove = isReadyToMove.map((x, ind) =>
-        ind == index ? true : x
+        ind === index ? true : x
       );
       setIsReadyToMove(newIsReadyToMove);
 
       console.log(animationObjects);
-    } else {
-      console.log(currentAnimationIndex);
-      console.log(currentObjectId, index);
-      console.log(isReadyToMove);
     }
   }, [currentAnimationIndex]);
 
@@ -225,7 +310,7 @@ export function Object({ index, src }) {
       animationObjects[String(index)][2][currentAnimationIndex]
     ) {
       if (
-        animationObjects[String(index)][2][currentAnimationIndex]["type"] ==
+        animationObjects[String(index)][2][currentAnimationIndex]["type"] ===
         "linnear_move"
       ) {
         currentX = animationObjects[String(index)][1][0];
@@ -237,7 +322,7 @@ export function Object({ index, src }) {
           animationObjects[String(index)][2][currentAnimationIndex].states
             .end[1];
         console.log(currentX, currentY, aX, aY);
-        if (isReadyToMove[index] && (currentX != aX || currentY != aY)) {
+        if (isReadyToMove[index] && (currentX !== aX || currentY !== aY)) {
           let newAnimationObjects = { ...animationObjects };
           newAnimationObjects[String(index)][2][
             currentAnimationIndex
@@ -249,13 +334,13 @@ export function Object({ index, src }) {
           console.log(animationObjects);
         }
       } else if (
-        animationObjects[String(index)][2][currentAnimationIndex]["type"] ==
+        animationObjects[String(index)][2][currentAnimationIndex]["type"] ===
         "opacity"
       ) {
         currentOpacity = animationObjects[String(index)][5];
         a =
           animationObjects[String(index)][2][currentAnimationIndex].states.end;
-        if (isReadyToMove[index] && currentOpacity != a) {
+        if (isReadyToMove[index] && currentOpacity !== a) {
           let newAnimationObjects = { ...animationObjects };
           newAnimationObjects[String(index)][2][
             currentAnimationIndex
@@ -285,10 +370,64 @@ export function Object({ index, src }) {
             animationTime > 18.5 - animationObjects[String(index)][0][1]
               ? "none"
               : "block",
+          width: `${animationObjects[String(index)][6]}px`,
+          height: `${animationObjects[String(index)][7]}px`,
         }}
         alt={`Выбранное изображение ${index + 1}`}
         className="object"
       />
+
+      <div
+        className="object__dotsWrapper"
+        style={{
+          width: `${animationObjects[String(index)][6]}px`,
+          height: `${animationObjects[String(index)][7]}px`,
+          position: "relative",
+        }}
+      >
+        <div
+          className="dotTopLeft object__sizeDot"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            cursor: "nw-resize",
+          }}
+          onMouseDown={(e) => handleMouseDownDot(e, "topLeft")}
+        />
+        <div
+          className="dotTopRight object__sizeDot"
+          style={{
+            position: "absolute",
+            top: 0,
+            right: 0,
+            cursor: "ne-resize",
+          }}
+          onMouseDown={(e) => handleMouseDownDot(e, "topRight")}
+        />
+
+        <div
+          className="dotBottomLeft object__sizeDot"
+          style={{
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            cursor: "sw-resize",
+          }}
+          onMouseDown={(e) => handleMouseDownDot(e, "bottomLeft")}
+        />
+
+        <div
+          className="dotBottomRight object__sizeDot"
+          style={{
+            position: "absolute",
+            right: 0,
+            bottom: 0,
+            cursor: "se-resize",
+          }}
+          onMouseDown={(e) => handleMouseDownDot(e, "bottomRight")}
+        />
+      </div>
     </>
   );
 }

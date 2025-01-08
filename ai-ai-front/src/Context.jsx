@@ -4,6 +4,7 @@ export const Context = createContext();
 
 export const Provider = ({ children }) => {
   const [isAdd, setIsAdd] = useState(false);
+  const [sceneColor, setSceneColor] = useState("#f5f5f5");
   const [selectedImages, setSelectedImages] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [animationId, setAnimationId] = useState(0);
@@ -14,7 +15,7 @@ export const Provider = ({ children }) => {
   const [isReadyToMove, setIsReadyToMove] = useState([]);
   const [imgFiles, setImgFiles] = useState([]);
 
-  const addAnimationObjects = (newObject, name) =>
+  const addAnimationObjects = (newObject, name, width, height) =>
     setAnimationObjects((prev) => ({
       ...prev,
       [newObject]: [
@@ -23,7 +24,9 @@ export const Provider = ({ children }) => {
         [],
         0, //summTimelineBlocksDistance
         name,
-        1, //opacity
+        1, //opacity,
+        width,
+        height,
       ],
     }));
 
@@ -54,6 +57,8 @@ export const Provider = ({ children }) => {
         addIsReadyToMove,
         imgFiles,
         setImgFiles,
+        sceneColor,
+        setSceneColor,
       }}
     >
       {children}

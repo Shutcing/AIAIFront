@@ -27,7 +27,6 @@ export const startRender = async (files, renderData) => {
 
 export const getVideo = async (videoName) => {
   try {
-    // Добавляем video_name как query параметр в URL
     const response = await axios.get(`${BASE_URL}/video_wa/${videoName}`, {
       responseType: "arraybuffer",
     });

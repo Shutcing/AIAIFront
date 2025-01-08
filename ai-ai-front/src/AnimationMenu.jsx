@@ -23,7 +23,7 @@ export function AnimationMenu({ scale, currentObj }) {
   const [isOpacityToolsShow, setIsOpacityToolsShow] = useState(false);
   const [animationsVariants, setAnimationVariants] = useState([
     ["Движение", "linnear_move"],
-    // ["Прозрачность", "opacity"],
+    ["Прозрачность", "opacity"],
   ]);
 
   const handleSliderChange = (value) => {
@@ -31,8 +31,8 @@ export function AnimationMenu({ scale, currentObj }) {
     newAnimationObjects[String(currentObjectId)][5] = value;
     setAnimationObjects(newAnimationObjects);
 
-    // let objWrapper = document.querySelector(`#o${currentObjectId}`);
-    // objWrapper.style.opacity = `${value}`;
+    let objWrapper = document.querySelector(`#o${currentObjectId}`);
+    objWrapper.style.opacity = `${value}`;
   };
 
   const showChoosePanel = () => {
@@ -40,6 +40,9 @@ export function AnimationMenu({ scale, currentObj }) {
   };
 
   const addNewAnimation = (e, animationType, animationTitle) => {
+    if (currentAnimationIndex != null) {
+      return;
+    }
     if (animationType === "opacity") {
       setIsOpacityToolsShow(true);
     }
@@ -58,12 +61,13 @@ export function AnimationMenu({ scale, currentObj }) {
   useEffect(() => {
     const handleClick = (e) => {
       if (
-        e.target.classList.contains("cursor") ||
-        e.target.classList.contains("play") ||
-        e.target.classList.contains("timeline") ||
-        e.target.classList.contains("timeline__container") ||
-        (e.target.tagName.toLowerCase() === "img" &&
-          !e.target.classList.contains("object"))
+        !document.querySelector(".choosePanel__opacityTools") &&
+        (e.target.classList.contains("cursor") ||
+          e.target.classList.contains("play") ||
+          e.target.classList.contains("timeline") ||
+          e.target.classList.contains("timeline__container") ||
+          (e.target.tagName.toLowerCase() === "img" &&
+            !e.target.classList.contains("object")))
       ) {
         setCurrentObjectId(null);
       } else {
@@ -81,6 +85,7 @@ export function AnimationMenu({ scale, currentObj }) {
   useEffect(() => {
     const handleKeyPress = (e) => {
       if (e.key === "Enter") {
+        setCurrentObjectId(null);
         setcurrentAnimationIndex(null);
         let newIsReadyToMove = isReadyToMove.map((x) => false);
         setIsReadyToMove(newIsReadyToMove);
@@ -118,8 +123,9 @@ export function AnimationMenu({ scale, currentObj }) {
         className="animationMenu"
         style={{
           display: currentObjectId == null ? "none" : "flex",
-          width: `${currentObj.width / scale}px`,
-          transform: `translate(0, ${currentObj.height / scale}px)`,
+          transform: `translate(0, ${currentObj.height / scale}px) scale(${
+            1 / scale
+          })`,
         }}
       >
         <ul
@@ -147,7 +153,9 @@ export function AnimationMenu({ scale, currentObj }) {
             />
             <span>
               {animationObjects[String(currentObjectId)]
-                ? animationObjects[String(currentObjectId)][5]
+                ? Math.round(
+                    animationObjects[String(currentObjectId)][5] * 10
+                  ) / 10
                 : 0}
             </span>
           </div>

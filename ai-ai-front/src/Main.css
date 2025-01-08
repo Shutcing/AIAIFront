@@ -87,3 +87,23 @@
   margin-right: 1%;
   cursor: pointer;
 }
+
+/*-bg change-----------------------------*/
+.sceneColor {
+  display: flex;
+  width: 90%;
+  height: 7%;
+  padding: 5% 5% 0 0;
+  justify-content: start;
+  align-items: center;
+  box-sizing: content-box;
+}
+
+.sceneColor__color {
+  cursor: pointer;
+  width: 20%;
+  height: 100%;
+  margin: 0 0 0 2%;
+  border: 3px solid var(--color-one);
+  border-radius: 5px;
+}

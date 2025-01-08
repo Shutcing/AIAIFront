@@ -12,10 +12,11 @@ export function Header() {
     setSelectedImages,
     imgFiles,
     animationObjects,
+    sceneColor,
   } = useContext(Context);
 
   const [currentTime, setCurrentTime] = useState(0);
-  const [isExporting, setIsExporting] = useState(false); // Состояние для анимации кнопки
+  const [isExporting, setIsExporting] = useState(false);
 
   const addPicture = () => {
     setIsAdd(!isAdd);
@@ -44,6 +45,17 @@ export function Header() {
       return `${hours}:${minutes}:${seconds}`;
     };
 
+    const rgbToArray = (rgbString) => {
+      // Удаляем пробелы и символы "rgb(" и ")" из строки
+      const rgbValues = rgbString
+        .replace(/\s+/g, "") // Удаляем все пробелы
+        .replace(/^rgb\(|\)$/g, "") // Убираем "rgb(" в начале и ")" в конце
+        .split(","); // Разделяем строку по запятой
+
+      // Преобразуем строковые компоненты в числа и возвращаем как массив
+      return rgbValues.map(Number); // Преобразуем каждый элемент в число
+    };
+
     const getWrapperStyles = (key) => {
       const element = document.querySelector(`#o${key}`).parentElement;
       const style = window.getComputedStyle(element);
@@ -68,6 +80,7 @@ export function Header() {
         animationWindow.clientWidth * k,
         animationWindow.clientHeight * k,
       ],
+      background_color: rgbToArray(sceneColor),
       fps: 120,
     };
 
@@ -83,8 +96,8 @@ export function Header() {
       const obj = animationObjects[key];
       const [timeStart, timeEnd] = obj[0];
       const [currentX, currentY] = obj[1];
+      const currentOpacity = obj[5];
 
-      // Обновляем минимальное и максимальное время
       minStartTime = Math.min(minStartTime, timeStart);
       maxEndTime = Math.max(
         maxEndTime,
@@ -113,9 +126,9 @@ export function Header() {
                 end_time: animation.time.end,
                 start_point:
                   (animation.states.start[0] * wrapperScale + wrapperXOffset) *
-                  k, // x координата
+                  k,
                 end_point:
-                  (animation.states.end[0] * wrapperScale + wrapperXOffset) * k, // x координата
+                  (animation.states.end[0] * wrapperScale + wrapperXOffset) * k,
               },
               {
                 param_name: "y",
@@ -123,31 +136,40 @@ export function Header() {
                 end_time: animation.time.end,
                 start_point:
                   (animation.states.start[1] * wrapperScale + wrapperYOffset) *
-                  k, // y координата
+                  k,
                 end_point:
-                  (animation.states.end[1] * wrapperScale + wrapperYOffset) * k, // y координата
+                  (animation.states.end[1] * wrapperScale + wrapperYOffset) * k,
+              },
+            ];
+          } else if (animation.type === "opacity") {
+            return [
+              {
+                param_name: "opacity",
+                start_time: animation.time.start,
+                end_time: animation.time.end,
+                start_point: animation.states.start * 255,
+                end_point: animation.states.end * 255,
               },
             ];
           }
-          return []; // Если тип анимации не "linear_move", пропускаем
+          return [];
         }),
       };
 
       json.animated_images.push(animatedImage);
     }
 
-    // Устанавливаем правильное значение для duration
     json.duration = maxEndTime - minStartTime;
 
+    console.log(json);
     return json;
   }
 
   const _export = async () => {
-    setIsExporting(true); // Запускаем анимацию кнопки
+    setIsExporting(true);
     let json = convertAnimationObjectsToJson(animationObjects);
     await startRender(imgFiles, json);
 
-    // Вводим флаг для предотвращения многократного вызова
     let isDownloading = false;
 
     let id = setInterval(async () => {
@@ -159,7 +181,7 @@ export function Header() {
           isDownloading = true;
           let byteArray = await getVideo(`videoTime_${currentTime}`);
           saveVideo(byteArray);
-          setIsExporting(false); // Останавливаем анимацию кнопки
+          setIsExporting(false);
         }
       }
     }, 100);
@@ -173,9 +195,6 @@ export function Header() {
             <img src="./logo.png" alt="" />
           </div>
           <div className="saving">
-            {/* <div onClick={save} className="save button">
-              Сохранить
-            </div> */}
             <div
               onClick={_export}
               className={`export button ${isExporting ? "exporting" : ""}`}

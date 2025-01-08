@@ -2,7 +2,7 @@
   width: 100%;
   height: 100%;
   position: relative;
-  background: #f0f0f0; /* Пример фона */
+  /* background: #f0f0f0; Пример фона */
   user-select: none; /* Отключает выделение текста */
   overflow: hidden; /* Обрезает содержимое за пределами окна */
 }

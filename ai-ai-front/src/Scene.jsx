@@ -11,23 +11,20 @@ export function Scene({ selectedImages }) {
     setAnimationObjects,
     currentObjectId,
     setCurrentObjectId,
+    sceneColor,
+    setSceneColor,
   } = useContext(Context);
-  const [scale, setScale] = useState(1); // Масштаб
-  const [cameraOffset, setCameraOffset] = useState({ x: 0, y: 0 }); // Смещение "камеры"
-  const [isDraggingCanvas, setIsDraggingCanvas] = useState(false); // Холст перетаскивается
-  const [isDraggingObject, setIsDraggingObject] = useState(null); // Индекс объекта, который сейчас перетаскивается
-  const dragStart = useRef({ x: 0, y: 0 }); // Координаты начала перетаскивания
-  const cameraStart = useRef({ x: 0, y: 0 }); // Начальная позиция "камеры"
-  const offsetStart = useRef({ x: 0, y: 0 }); // Начальные координаты объекта
+  const [scale, setScale] = useState(1);
+  const [cameraOffset, setCameraOffset] = useState({ x: 0, y: 0 });
+  const [isDraggingCanvas, setIsDraggingCanvas] = useState(false);
+  const [isDraggingObject, setIsDraggingObject] = useState(null);
+  const dragStart = useRef({ x: 0, y: 0 });
+  const cameraStart = useRef({ x: 0, y: 0 });
+  const offsetStart = useRef({ x: 0, y: 0 });
 
-  // Обработчик масштабирования
   const handleWheel = useCallback(
     (e) => {
-      // try {
-      //   e.preventDefault();
-      // } catch {}
-
-      const isCtrlZoom = e.ctrlKey; // Проверяем, используется ли Ctrl + колесико
+      const isCtrlZoom = e.ctrlKey;
       const zoomIntensity = 0.01;
 
       if (isCtrlZoom) {
@@ -55,7 +52,6 @@ export function Scene({ selectedImages }) {
     [scale]
   );
 
-  // Начало перетаскивания объекта
   const handleMouseDownObject = (e, index) => {
     e.preventDefault();
     e.stopPropagation();
@@ -73,7 +69,6 @@ export function Scene({ selectedImages }) {
     }
   };
 
-  // Начало перетаскивания холста
   const handleMouseDownCanvas = (e) => {
     if (e.detail === 2) {
       setIsDraggingCanvas(true);
@@ -85,7 +80,6 @@ export function Scene({ selectedImages }) {
     }
   };
 
-  // Перетаскивание
   const handleMouseMove = (e) => {
     if (isDraggingObject !== null) {
       const newAnimationObjects = { ...animationObjects };
@@ -106,7 +100,6 @@ export function Scene({ selectedImages }) {
     }
   };
 
-  // Окончание перетаскивания
   const handleMouseUp = () => {
     setIsDraggingCanvas(false);
     setIsDraggingObject(null);
@@ -115,6 +108,7 @@ export function Scene({ selectedImages }) {
   const setCurrentObjectIdNull = (e) => {
     console.log(e.target);
     if (
+      !document.querySelector(".choosePanel__opacityTools") &&
       e.target.className != "object" &&
       e.target.className != "choosePanel__item"
     ) {
@@ -136,6 +130,7 @@ export function Scene({ selectedImages }) {
           isDraggingObject !== null || isDraggingCanvas ? "grabbing" : "grab",
         overflow: "hidden",
         position: "relative",
+        background: `${sceneColor}`,
       }}
     >
       <div
@@ -145,6 +140,27 @@ export function Scene({ selectedImages }) {
           transformOrigin: "0 0",
         }}
       >
+        {selectedImages.map((image, index) => {
+          return (
+            <>
+              <div
+                key={index}
+                className="sceneContent"
+                id={`o${index}`}
+                style={{
+                  transform: `translate(${
+                    animationObjects[String(index)]?.[1]?.[0] || 0
+                  }px, ${animationObjects[String(index)]?.[1]?.[1] || 0}px)`,
+                  transformOrigin: "0 0",
+                  position: "absolute",
+                }}
+                onMouseDown={(e) => handleMouseDownObject(e, index)}
+              >
+                <_Object index={index} src={image}></_Object>
+              </div>
+            </>
+          );
+        })}
         <div
           className="sceneContent"
           style={{
@@ -168,27 +184,6 @@ export function Scene({ selectedImages }) {
             }
           ></AnimationMenu>
         </div>
-        {selectedImages.map((image, index) => {
-          return (
-            <>
-              <div
-                key={index}
-                className="sceneContent"
-                id={`o${index}`}
-                style={{
-                  transform: `translate(${
-                    animationObjects[String(index)]?.[1]?.[0] || 0
-                  }px, ${animationObjects[String(index)]?.[1]?.[1] || 0}px)`,
-                  transformOrigin: "0 0",
-                  position: "absolute",
-                }}
-                onMouseDown={(e) => handleMouseDownObject(e, index)}
-              >
-                <_Object index={index} src={image}></_Object>
-              </div>
-            </>
-          );
-        })}
       </div>
     </div>
   );
