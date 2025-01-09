@@ -177,7 +177,12 @@ export function AnimationMenu({ scale, currentObj }) {
           })}
           <li
             class="choosePanel__item"
-            style={{ background: `var(--green-color)` }}
+            style={{
+              background:
+                isReadyToMove.filter((x) => x == true).length != 0
+                  ? `var(--green-color)`
+                  : `var(--red-color)`,
+            }}
             onClick={() => {
               const event = new KeyboardEvent("keydown", {
                 key: "Enter",
