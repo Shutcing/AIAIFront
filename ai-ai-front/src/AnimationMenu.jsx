@@ -191,7 +191,7 @@ export function AnimationMenu({ scale, currentObj }) {
               document.dispatchEvent(event);
             }}
           >
-            ✔
+            {isReadyToMove.filter((x) => x == true).length != 0 ? "✔" : "✖"}
           </li>
         </ul>
       </div>
