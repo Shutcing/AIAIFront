@@ -106,7 +106,6 @@ export function Scene({ selectedImages }) {
   };
 
   const setCurrentObjectIdNull = (e) => {
-    console.log(e.target);
     if (
       !document.querySelector(".choosePanel__opacityTools") &&
       e.target.className != "object" &&

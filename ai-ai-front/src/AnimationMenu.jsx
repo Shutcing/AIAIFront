@@ -28,7 +28,7 @@ export function AnimationMenu({ scale, currentObj }) {
 
   const handleSliderChange = (value) => {
     let newAnimationObjects = { ...animationObjects };
-    newAnimationObjects[String(currentObjectId)][5] = value;
+    newAnimationObjects[String(currentObjectId)][5] = Number(value);
     setAnimationObjects(newAnimationObjects);
 
     let objWrapper = document.querySelector(`#o${currentObjectId}`);
@@ -71,7 +71,6 @@ export function AnimationMenu({ scale, currentObj }) {
       ) {
         setCurrentObjectId(null);
       } else {
-        console.log(e.target);
       }
     };
 
@@ -143,12 +142,10 @@ export function AnimationMenu({ scale, currentObj }) {
               step="0.1"
               value={
                 animationObjects[String(currentObjectId)]
-                  ? animationObjects[String(currentObjectId)][5]
+                  ? Number(animationObjects[String(currentObjectId)][5])
                   : 0
               }
-              onChange={(e) =>
-                handleSliderChange(parseFloat(e.target.value).toFixed(1))
-              }
+              onChange={(e) => handleSliderChange(e.target.value)}
               style={{ marginRight: "10px" }}
             />
             <span>

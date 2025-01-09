@@ -133,15 +133,12 @@ export function Object({ index, src }) {
   useEffect(() => {
     let objWrapper = document.querySelector(`#o${index}`);
     if (!objWrapper || !animationObjects[String(index)][2]) {
-      console.log(
-        objWrapper,
-        animationObjects[String(index)][2],
-        currentAnimationIndex
-      );
       return;
     }
 
-    let animations = animationObjects[String(index)][2];
+    let animations = animationObjects[String(index)][2].filter(
+      (anim, i) => anim != null
+    );
     animations.sort((a, b) => a.time.start - b.time.start);
 
     for (let animation of animations) {
@@ -158,25 +155,25 @@ export function Object({ index, src }) {
           animationObjects[String(index)][1][0] = currentX;
           animationObjects[String(index)][1][1] = currentY;
         } else if (animation.type === "opacity") {
-          const currentOpacity = start + progress * (end - start);
+          const currentOpacity = Number(start + progress * (end - start));
           objWrapper.style.opacity = currentOpacity;
           animationObjects[String(index)][5] = currentOpacity;
         }
       }
 
-      if (animationTime < timeStart) {
-        if (animation.type === "linnear_move") {
-          objWrapper.style.transform = `translate(${start[0]}px, ${start[1]}px)`;
-        } else if (animation.type === "opacity") {
-          objWrapper.style.opacity = start;
-        }
-      } else if (animationTime > timeEnd) {
-        if (animation.type === "linnear_move") {
-          objWrapper.style.transform = `translate(${end[0]}px, ${end[1]}px)`;
-        } else if (animation.type === "opacity") {
-          objWrapper.style.opacity = end;
-        }
-      }
+      // if (animationTime < timeStart) {
+      //   if (animation.type === "linnear_move") {
+      //     objWrapper.style.transform = `translate(${start[0]}px, ${start[1]}px)`;
+      //   } else if (animation.type === "opacity") {
+      //     objWrapper.style.opacity = start;
+      //   }
+      // } else if (animationTime > timeEnd) {
+      //   if (animation.type === "linnear_move") {
+      //     objWrapper.style.transform = `translate(${end[0]}px, ${end[1]}px)`;
+      //   } else if (animation.type === "opacity") {
+      //     objWrapper.style.opacity = end;
+      //   }
+      // }
     }
   }, [animationTime]);
 
@@ -194,7 +191,9 @@ export function Object({ index, src }) {
     if (!objWrapper) return;
 
     if (isPlaying) {
-      let animations = [...animationObjects[String(index)][2]];
+      let animations = [
+        ...animationObjects[String(index)][2].filter((anim, i) => anim != null),
+      ];
       animations.sort((a, b) => a.time.start - b.time.start);
 
       animations.forEach((animation) => {
@@ -293,8 +292,6 @@ export function Object({ index, src }) {
         ind === index ? true : x
       );
       setIsReadyToMove(newIsReadyToMove);
-
-      console.log(animationObjects);
     }
   }, [currentAnimationIndex]);
 
@@ -321,7 +318,6 @@ export function Object({ index, src }) {
         aY =
           animationObjects[String(index)][2][currentAnimationIndex].states
             .end[1];
-        console.log(currentX, currentY, aX, aY);
         if (isReadyToMove[index] && (currentX !== aX || currentY !== aY)) {
           let newAnimationObjects = { ...animationObjects };
           newAnimationObjects[String(index)][2][
@@ -331,13 +327,12 @@ export function Object({ index, src }) {
             currentAnimationIndex
           ].time.end = animationTime;
           setAnimationObjects(newAnimationObjects);
-          console.log(animationObjects);
         }
       } else if (
         animationObjects[String(index)][2][currentAnimationIndex]["type"] ===
         "opacity"
       ) {
-        currentOpacity = animationObjects[String(index)][5];
+        currentOpacity = Number(animationObjects[String(index)][5]);
         a =
           animationObjects[String(index)][2][currentAnimationIndex].states.end;
         if (isReadyToMove[index] && currentOpacity !== a) {
@@ -349,15 +344,10 @@ export function Object({ index, src }) {
             currentAnimationIndex
           ].time.end = animationTime;
           setAnimationObjects(newAnimationObjects);
-          console.log(animationObjects);
         }
       }
     }
   }, [animationObjects]);
-
-  useEffect(() => {
-    console.log(animationTime);
-  }, [animationTime]);
 
   return (
     <>

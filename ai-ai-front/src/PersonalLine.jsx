@@ -87,12 +87,12 @@ export function PersonalLine({ marginLeft, name, id }) {
     return `${
       document.querySelectorAll(`.personal-line`) &&
       document.querySelector(".holder__row") &&
-      document.querySelectorAll(`.personal-line`)[id]
+      document.querySelectorAll(`.personal-line`)[id - 1]
         ? document
             .querySelectorAll(`.personal-line`)
-            [id].querySelectorAll(".holder__row").length *
+            [id - 1].querySelectorAll(".holder__row").length *
           document.querySelector(".holder__row").clientHeight *
-          0.2
+          1
         : 0
     }px`;
   };
@@ -153,16 +153,16 @@ export function PersonalLine({ marginLeft, name, id }) {
         <div className="algebra__holder holder">
           {[
             ...new Set(
-              animationObjects[String(id)][2].map(
-                (animation, ind) => animation.type
-              )
+              animationObjects[String(id)][2]
+                .filter((anim, ind) => anim != null)
+                .map((animation, ind) => animation.type)
             ),
           ].map((type, i) => {
             return (
               <div className="holder__row">
                 {animationObjects[String(id)][2].map((animation, ind) => {
-                  console.log(animation.type, type);
-                  if (animation.type == type)
+                  if (animation != null && animation.type == type) {
+                    console.log(animationObjects[String(id)][2][ind]);
                     return (
                       <SingleTimelineAnimation
                         key={ind}
@@ -171,6 +171,7 @@ export function PersonalLine({ marginLeft, name, id }) {
                         objectId={id}
                       ></SingleTimelineAnimation>
                     );
+                  }
                 })}
               </div>
             );

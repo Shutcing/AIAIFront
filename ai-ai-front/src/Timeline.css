@@ -1,5 +1,5 @@
 .timeline {
-  height: 100%;
+  max-height: 20%;
 }
 
 .timeline__container {

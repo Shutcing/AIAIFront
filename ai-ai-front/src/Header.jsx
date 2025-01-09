@@ -117,43 +117,49 @@ export function Header() {
           scale_x: htmlObj.width * k,
           scale_y: htmlObj.height * k,
         },
-        animations: obj[2].flatMap((animation) => {
-          if (animation.type === "linnear_move") {
-            return [
-              {
-                param_name: "x",
-                start_time: animation.time.start,
-                end_time: animation.time.end,
-                start_point:
-                  (animation.states.start[0] * wrapperScale + wrapperXOffset) *
-                  k,
-                end_point:
-                  (animation.states.end[0] * wrapperScale + wrapperXOffset) * k,
-              },
-              {
-                param_name: "y",
-                start_time: animation.time.start,
-                end_time: animation.time.end,
-                start_point:
-                  (animation.states.start[1] * wrapperScale + wrapperYOffset) *
-                  k,
-                end_point:
-                  (animation.states.end[1] * wrapperScale + wrapperYOffset) * k,
-              },
-            ];
-          } else if (animation.type === "opacity") {
-            return [
-              {
-                param_name: "opacity",
-                start_time: animation.time.start,
-                end_time: animation.time.end,
-                start_point: animation.states.start * 255,
-                end_point: animation.states.end * 255,
-              },
-            ];
-          }
-          return [];
-        }),
+        animations: obj[2]
+          .filter((anim, i) => anim != null)
+          .flatMap((animation) => {
+            if (animation.type === "linnear_move") {
+              return [
+                {
+                  param_name: "x",
+                  start_time: animation.time.start,
+                  end_time: animation.time.end,
+                  start_point:
+                    (animation.states.start[0] * wrapperScale +
+                      wrapperXOffset) *
+                    k,
+                  end_point:
+                    (animation.states.end[0] * wrapperScale + wrapperXOffset) *
+                    k,
+                },
+                {
+                  param_name: "y",
+                  start_time: animation.time.start,
+                  end_time: animation.time.end,
+                  start_point:
+                    (animation.states.start[1] * wrapperScale +
+                      wrapperYOffset) *
+                    k,
+                  end_point:
+                    (animation.states.end[1] * wrapperScale + wrapperYOffset) *
+                    k,
+                },
+              ];
+            } else if (animation.type === "opacity") {
+              return [
+                {
+                  param_name: "opacity",
+                  start_time: animation.time.start,
+                  end_time: animation.time.end,
+                  start_point: animation.states.start * 255,
+                  end_point: animation.states.end * 255,
+                },
+              ];
+            }
+            return [];
+          }),
       };
 
       json.animated_images.push(animatedImage);
@@ -161,7 +167,6 @@ export function Header() {
 
     json.duration = maxEndTime - minStartTime;
 
-    console.log(json);
     return json;
   }
 
@@ -184,7 +189,7 @@ export function Header() {
           setIsExporting(false);
         }
       }
-    }, 100);
+    }, 500);
   };
 
   return (

@@ -1,6 +1,7 @@
 .header {
   padding: 1% 0;
   background: var(--timeline-color);
+  min-height: 10%;
 }
 .header__container {
   display: flex;

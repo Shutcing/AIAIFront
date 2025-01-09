@@ -51,7 +51,6 @@ export function Main() {
             imgW,
             imgH
           );
-          console.log(animationObjects);
         };
         tempImg.src = imageUrl;
       }

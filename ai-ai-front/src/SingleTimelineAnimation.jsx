@@ -15,41 +15,75 @@ export function SingleTimelineAnimation({ title, index, objectId }) {
     isReadyToMove,
   } = useContext(Context);
 
-  const [width, setWidth] = useState(1);
-  const [marginLeft, setMarginLeft] = useState(0);
+  const findMarginLeft = () => {
+    let _thisWrapper = document.querySelector(
+      `#animation${index}and${objectId}`
+    );
+    console.log(_thisWrapper);
+    if (_thisWrapper) {
+      let _this = _thisWrapper.querySelector(".holder__animation");
+      let thisStyles = getComputedStyle(_this);
+      let left = Number(thisStyles.left.replace("px", ""));
+      return left;
+    }
+    return 0;
+  };
+
+  const findAnimationWidth = () => {
+    let _thisWrapper = document.querySelector(
+      `#animation${index}and${objectId}`
+    );
+    console.log(_thisWrapper);
+    if (_thisWrapper) {
+      let _this = _thisWrapper.querySelector(".holder__animation");
+      let thisStyles = getComputedStyle(_this);
+      let width = Number(thisStyles.width.replace("px", ""));
+      return width;
+    }
+    return 1;
+  };
+
+  const [width, setWidth] = useState(findAnimationWidth());
+  const [marginLeft, setMarginLeft] = useState(findMarginLeft());
   const [isDeletePanelShow, setIsDeletePanelShow] = useState(false);
 
   const deleteAnimation = (event) => {
+    let objWrapper = document.querySelector(`#o${objectId}`);
+    objWrapper.style.opacity = 1;
     let newAnimationObjects = { ...animationObjects };
     newAnimationObjects[String(objectId)][2] = newAnimationObjects[
       String(objectId)
-    ][2].filter((_, i) => i != index);
-    console.log(newAnimationObjects);
+    ][2].map((anim, i) => {
+      if (i == index) {
+        return null;
+      } else {
+        return anim;
+      }
+    });
     setcurrentAnimationIndex(null);
     setAnimationObjects(newAnimationObjects);
+    // setWidthAndMarginTop();
   };
 
   const chooseThisAnimation = () => {
     setIsDeletePanelShow(!isDeletePanelShow);
   };
 
+  const setWidthAndMarginTop = () => {
+    setWidth(
+      (animationObjects[String(objectId)][2][index].time.end -
+        animationObjects[String(objectId)][2][index].time.start) *
+        timeStep
+    );
+    setMarginLeft(
+      animationObjects[String(objectId)][2][index].time.start * timeStep
+    );
+  };
+
   useEffect(() => {
     try {
       if (index == currentAnimationIndex && isReadyToMove[objectId]) {
-        setWidth(
-          (animationObjects[String(objectId)][2][currentAnimationIndex].time
-            .end -
-            animationObjects[String(objectId)][2][currentAnimationIndex].time
-              .start) *
-            timeStep
-        );
-        setMarginLeft(
-          animationObjects[String(objectId)][2][currentAnimationIndex].time
-            .start * timeStep
-        );
-      } else {
-        console.log(index, currentAnimationIndex, isReadyToMove[objectId]);
-        console.log(isReadyToMove);
+        setWidthAndMarginTop();
       }
     } catch {}
   }, [animationObjects]);
@@ -61,7 +95,7 @@ export function SingleTimelineAnimation({ title, index, objectId }) {
         onClick={deleteAnimation}
         style={{
           display: isDeletePanelShow ? "flex" : "none",
-          transform: `translate(100%,  -70%)`,
+          transform: `translate(${marginLeft}px,  -70%)`,
         }}
       >
         Удалить
