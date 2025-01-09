@@ -121,7 +121,10 @@ export function AnimationMenu({ scale, currentObj }) {
       <div
         className="animationMenu"
         style={{
-          display: currentObjectId == null ? "none" : "flex",
+          display:
+            currentObjectId == null && !isReadyToMove[Number(currentObj)]
+              ? "none"
+              : "flex",
           transform: `translate(0, ${currentObj.height / scale}px) scale(${
             1 / scale
           })`,
@@ -172,7 +175,7 @@ export function AnimationMenu({ scale, currentObj }) {
           })}
           <li
             class="choosePanel__item"
-            style={{ background: `var(--red-color)` }}
+            style={{ background: `var(--green-color)` }}
             onClick={() => {
               const event = new KeyboardEvent("keydown", {
                 key: "Enter",
@@ -186,7 +189,7 @@ export function AnimationMenu({ scale, currentObj }) {
               document.dispatchEvent(event);
             }}
           >
-            Enter
+            ✔
           </li>
         </ul>
       </div>
