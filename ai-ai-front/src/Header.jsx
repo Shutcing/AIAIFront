@@ -80,7 +80,7 @@ export function Header() {
         animationWindow.clientHeight * k,
       ],
       background_color: rgbToArray(sceneColor),
-      fps: 120,
+      fps: 60,
     };
 
     console.log(json);
