@@ -101,12 +101,14 @@ export function AnimationMenu({ scale, currentObj }) {
       return false;
     }
     return (
-      animationObjects[String(currentObjectId)][2].filter(
-        (animation) =>
-          animation.title === variant[0] &&
-          animationTime < animation.time.end &&
-          animationTime > animation.time.start
-      ).length === 0
+      animationObjects[String(currentObjectId)][2]
+        .filter((x) => x != null)
+        .filter(
+          (animation) =>
+            animation.title === variant[0] &&
+            animationTime < animation.time.end &&
+            animationTime > animation.time.start
+        ).length === 0
     );
   };
 
