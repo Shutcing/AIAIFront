@@ -66,7 +66,9 @@ export function SingleTimelineAnimation({ title, index, objectId }) {
   };
 
   const chooseThisAnimation = () => {
-    setIsDeletePanelShow(!isDeletePanelShow);
+    if (isReadyToMove.filter((x) => x == true).length == 0) {
+      setIsDeletePanelShow(!isDeletePanelShow);
+    }
   };
 
   const setWidthAndMarginTop = () => {

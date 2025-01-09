@@ -170,6 +170,24 @@ export function AnimationMenu({ scale, currentObj }) {
               );
             }
           })}
+          <li
+            class="choosePanel__item"
+            style={{ background: `var(--red-color)` }}
+            onClick={() => {
+              const event = new KeyboardEvent("keydown", {
+                key: "Enter",
+                code: "Enter",
+                keyCode: 13, // Обратите внимание, что keyCode устарел, но все еще работает во многих браузерах
+                which: 13, // Тоже устарел, использовать с осторожностью
+                bubbles: true, // Это событие должно "пузыриться"
+              });
+
+              // Диспетчеризуем событие
+              document.dispatchEvent(event);
+            }}
+          >
+            Enter
+          </li>
         </ul>
       </div>
     </>
