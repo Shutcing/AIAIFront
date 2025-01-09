@@ -4,7 +4,7 @@ export const Context = createContext();
 
 export const Provider = ({ children }) => {
   const [isAdd, setIsAdd] = useState(false);
-  const [sceneColor, setSceneColor] = useState("#f5f5f5");
+  const [sceneColor, setSceneColor] = useState("rgb(245, 245, 245)");
   const [selectedImages, setSelectedImages] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [animationId, setAnimationId] = useState(0);

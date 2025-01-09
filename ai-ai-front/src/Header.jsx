@@ -51,7 +51,6 @@ export function Header() {
         .replace(/\s+/g, "") // Удаляем все пробелы
         .replace(/^rgb\(|\)$/g, "") // Убираем "rgb(" в начале и ")" в конце
         .split(","); // Разделяем строку по запятой
-
       // Преобразуем строковые компоненты в числа и возвращаем как массив
       return rgbValues.map(Number); // Преобразуем каждый элемент в число
     };
@@ -83,6 +82,8 @@ export function Header() {
       background_color: rgbToArray(sceneColor),
       fps: 120,
     };
+
+    console.log(json);
 
     let minStartTime = Infinity;
     let maxEndTime = -Infinity;
@@ -176,20 +177,14 @@ export function Header() {
     await startRender(imgFiles, json);
 
     let isDownloading = false;
+    let status = await checkVideo(`videoTime_${currentTime}`);
 
-    let id = setInterval(async () => {
-      let status = await checkVideo(`videoTime_${currentTime}`);
-      if (status === "completed") {
-        clearInterval(id);
-
-        if (!isDownloading) {
-          isDownloading = true;
-          let byteArray = await getVideo(`videoTime_${currentTime}`);
-          saveVideo(byteArray);
-          setIsExporting(false);
-        }
-      }
-    }, 500);
+    if (!isDownloading) {
+      isDownloading = true;
+      let byteArray = await getVideo(`videoTime_${currentTime}`);
+      saveVideo(byteArray);
+      setIsExporting(false);
+    }
   };
 
   return (
