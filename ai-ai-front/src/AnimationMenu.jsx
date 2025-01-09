@@ -181,7 +181,7 @@ export function AnimationMenu({ scale, currentObj }) {
               background:
                 isReadyToMove.filter((x) => x == true).length != 0
                   ? `var(--green-color)`
-                  : `var(--red-color)`,
+                  : `var(--color-two)`,
             }}
             onClick={() => {
               const event = new KeyboardEvent("keydown", {
