@@ -414,6 +414,18 @@ export function Object({ index, src }) {
             right: 0,
             bottom: 0,
             cursor: "se-resize",
+            width: document.querySelector(`#o${index}`)
+              ? `${
+                  document.querySelector(`#o${index}`).querySelector("img")
+                    .clientWidth * 0.04
+                }px`
+              : "0px",
+            height: document.querySelector(`#o${index}`)
+              ? `${
+                  document.querySelector(`#o${index}`).querySelector("img")
+                    .clientWidth * 0.04
+                }px`
+              : "0px",
             background: index == currentObjectId ? "var(--color-one)" : "none",
           }}
           onMouseDown={(e) => handleMouseDownDot(e, "bottomRight")}
