@@ -191,6 +191,7 @@ export function Scene({ selectedImages }) {
             if (copiedArr[2]) copiedArr[2] = [];
             if (copiedArr[3]) copiedArr[3] = 0;
             if (copiedArr[4]) copiedArr[4] = updateString(copiedArr[4]);
+            if (copiedArr[5]) copiedArr[5] = 1;
 
             setCopiedObject({
               imageUrl: selectedImages[currentObjectId],
