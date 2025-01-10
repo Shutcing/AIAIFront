@@ -124,7 +124,7 @@ export function AnimationMenu({ scale, currentObj }) {
         className="animationMenu"
         style={{
           display:
-            currentObjectId == null && !isReadyToMove[Number(currentObj)]
+            currentObjectId == null && !isReadyToMove[Number(currentObjectId)]
               ? "none"
               : "flex",
           transform: `translate(0, ${currentObj.height / scale}px) scale(${
@@ -176,7 +176,7 @@ export function AnimationMenu({ scale, currentObj }) {
             }
           })}
           <li
-            class="choosePanel__item"
+            className="choosePanel__item"
             style={{
               background:
                 isReadyToMove.filter((x) => x == true).length != 0

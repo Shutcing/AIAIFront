@@ -17,9 +17,11 @@ export function SingleTimelineAnimation({ title, index, objectId }) {
 
   const findMarginLeft = () => {
     let _thisWrapper = document.querySelector(
-      `#animation${index}and${objectId}`
+      `#animation${index}and${animationObjects[String(objectId)][4]
+        .replace(".", "")
+        .replace("(", "")
+        .replace(")", "")}`
     );
-    console.log(_thisWrapper);
     if (_thisWrapper) {
       let _this = _thisWrapper.querySelector(".holder__animation");
       let thisStyles = getComputedStyle(_this);
@@ -31,7 +33,10 @@ export function SingleTimelineAnimation({ title, index, objectId }) {
 
   const findAnimationWidth = () => {
     let _thisWrapper = document.querySelector(
-      `#animation${index}and${objectId}`
+      `#animation${index}and${animationObjects[String(objectId)][4]
+        .replace(".", "")
+        .replace("(", "")
+        .replace(")", "")}`
     );
     console.log(_thisWrapper);
     if (_thisWrapper) {
@@ -91,7 +96,12 @@ export function SingleTimelineAnimation({ title, index, objectId }) {
   }, [animationObjects]);
 
   return (
-    <div id={`animation${index}and${objectId}`}>
+    <div
+      id={`animation${index}and${animationObjects[String(objectId)][4]
+        .replace(".", "")
+        .replace("(", "")
+        .replace(")", "")}`}
+    >
       <div
         className="holder__delete"
         onClick={deleteAnimation}

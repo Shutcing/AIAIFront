@@ -43,8 +43,9 @@
 .choosePanel__item {
   display: flex;
   justify-content: center;
+  align-items: center;
   cursor: pointer;
-  padding: 5% 10%;
+  padding: 8px 18px;
   border-radius: 10px;
   background: var(--timeline-color);
 }

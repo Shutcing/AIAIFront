@@ -83,8 +83,6 @@ export function Header() {
       fps: 46,
     };
 
-    console.log(json);
-
     let minStartTime = Infinity;
     let maxEndTime = -Infinity;
 
@@ -103,11 +101,21 @@ export function Header() {
       maxEndTime = Math.max(
         maxEndTime,
         timeEnd,
-        ...obj[2].map((animation) => animation.time.end)
+        ...obj[2]
+          .filter((x) => x != null)
+          .map((animation) => animation.time.end)
       );
 
+      function removeNumberSubstrings(inputString) {
+        // Регулярное выражение для поиска подстрок в формате "(число)"
+        const regex = /\(\d+\)/g;
+
+        // Заменяем все найденные подстроки на пустую строку
+        return inputString.replace(regex, "").trim(); // Удаляем лишние пробелы в начале и конце
+      }
+
       const animatedImage = {
-        name: obj[4],
+        name: removeNumberSubstrings(obj[4]),
         living_start: timeStart,
         living_end: 18.5 - timeEnd,
         params: {
@@ -172,10 +180,25 @@ export function Header() {
   }
 
   const _export = async () => {
+    function removeNumberSubstrings(file) {
+      console.log(file);
+      let name = file.name;
+      // Регулярное выражение для поиска подстрок в формате "(число)"
+      const regex = /\(\d+\)/g;
+
+      // Заменяем все найденные подстроки на пустую строку
+      return new File([file], name.replace(regex, "").trim()); // Удаляем лишние пробелы в начале и конце
+    }
     setIsExporting(true);
     let json = convertAnimationObjectsToJson(animationObjects);
-    await startRender(imgFiles, json);
-
+    console.log(
+      imgFiles.filter((x) => !x.name.includes("(")),
+      json
+    );
+    await startRender(
+      imgFiles.filter((x) => !x.name.includes("(")),
+      json
+    );
     let isDownloading = false;
     let status = await checkVideo(`videoTime_${currentTime}`);
 

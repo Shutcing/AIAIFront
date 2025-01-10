@@ -169,7 +169,7 @@ export function Timeline() {
               key={ind}
               id={ind}
               marginLeft={timeStep}
-              name={`object ${ind}`}
+              name={animationObjects[ind][4]}
             ></PersonalLine>
           ))}
         </div>
