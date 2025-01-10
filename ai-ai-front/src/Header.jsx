@@ -80,7 +80,7 @@ export function Header() {
         animationWindow.clientHeight * k,
       ],
       background_color: rgbToArray(sceneColor),
-      fps: 46,
+      fps: 24,
     };
 
     let minStartTime = Infinity;

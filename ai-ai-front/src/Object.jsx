@@ -375,7 +375,7 @@ export function Object({ index, src }) {
           position: "relative",
         }}
       >
-        <div
+        {/* <div
           className="dotTopLeft object__sizeDot"
           style={{
             position: "absolute",
@@ -405,7 +405,7 @@ export function Object({ index, src }) {
             cursor: "sw-resize",
           }}
           onMouseDown={(e) => handleMouseDownDot(e, "bottomLeft")}
-        />
+        /> */}
 
         <div
           className="dotBottomRight object__sizeDot"
@@ -414,6 +414,7 @@ export function Object({ index, src }) {
             right: 0,
             bottom: 0,
             cursor: "se-resize",
+            background: index == currentObjectId ? "var(--color-one)" : "none",
           }}
           onMouseDown={(e) => handleMouseDownDot(e, "bottomRight")}
         />
