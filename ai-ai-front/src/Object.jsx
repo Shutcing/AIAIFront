@@ -161,19 +161,19 @@ export function Object({ index, src }) {
         }
       }
 
-      // if (animationTime < timeStart) {
-      //   if (animation.type === "linnear_move") {
-      //     objWrapper.style.transform = `translate(${start[0]}px, ${start[1]}px)`;
-      //   } else if (animation.type === "opacity") {
-      //     objWrapper.style.opacity = start;
-      //   }
-      // } else if (animationTime > timeEnd) {
-      //   if (animation.type === "linnear_move") {
-      //     objWrapper.style.transform = `translate(${end[0]}px, ${end[1]}px)`;
-      //   } else if (animation.type === "opacity") {
-      //     objWrapper.style.opacity = end;
-      //   }
-      // }
+      if (animationTime < timeStart) {
+        if (animation.type === "linnear_move") {
+          objWrapper.style.transform = `translate(${start[0]}px, ${start[1]}px)`;
+        } else if (animation.type === "opacity") {
+          objWrapper.style.opacity = start;
+        }
+      } else if (animationTime > timeEnd) {
+        if (animation.type === "linnear_move") {
+          objWrapper.style.transform = `translate(${end[0]}px, ${end[1]}px)`;
+        } else if (animation.type === "opacity") {
+          objWrapper.style.opacity = end;
+        }
+      }
     }
   }, [animationTime]);
 
