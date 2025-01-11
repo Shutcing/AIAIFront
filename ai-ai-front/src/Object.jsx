@@ -105,8 +105,8 @@ export function Object({ index, src }) {
       }
 
       const newAnimationObjects = { ...animationObjects };
-      newAnimationObjects[String(index)][1][0] = newX;
-      newAnimationObjects[String(index)][1][1] = newY;
+      newAnimationObjects[String(index)][1][0] = x;
+      newAnimationObjects[String(index)][1][1] = y;
       newAnimationObjects[String(index)][6] = newW;
       newAnimationObjects[String(index)][7] = newH;
 

@@ -195,25 +195,25 @@ export function Header() {
       imgFiles.filter((x) => !x.name.includes("(")),
       json
     );
-    let state = await startRender(
+    await startRender(
       imgFiles.filter((x) => !x.name.includes("(")),
       json
     );
-    while (state != "comleted") {
-      state = await startRender(
-        imgFiles.filter((x) => !x.name.includes("(")),
-        json
-      );
-    }
     let isDownloading = false;
-    let status = await checkVideo(`videoTime_${currentTime}`);
 
-    if (!isDownloading) {
-      isDownloading = true;
-      let byteArray = await getVideo(`videoTime_${currentTime}`);
-      saveVideo(byteArray);
-      setIsExporting(false);
-    }
+    let ID = setInterval(async () => {
+      let status = await checkVideo(`videoTime_${currentTime}`);
+      console.log(status);
+      if (status == "completed") {
+        clearInterval(ID);
+        if (!isDownloading) {
+          isDownloading = true;
+          let byteArray = await getVideo(`videoTime_${currentTime}`);
+          saveVideo(byteArray);
+          setIsExporting(false);
+        }
+      }
+    }, 1000);
   };
 
   return (
