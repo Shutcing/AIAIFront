@@ -275,14 +275,14 @@ export function Object({ index, src }) {
         let newAnimationObjects = { ...animationObjects };
         newAnimationObjects[String(index)][2][
           currentAnimationIndex
-        ].states.start = animationObjects[String(index)][5];
+        ].states.start = Number(animationObjects[String(index)][5]);
         newAnimationObjects[String(index)][2][
           currentAnimationIndex
         ].time.start = animationTime;
 
         newAnimationObjects[String(index)][2][
           currentAnimationIndex
-        ].states.end = animationObjects[String(index)][5];
+        ].states.end = Number(animationObjects[String(index)][5]);
         newAnimationObjects[String(index)][2][currentAnimationIndex].time.end =
           animationTime;
         setAnimationObjects(newAnimationObjects);

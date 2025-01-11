@@ -195,10 +195,16 @@ export function Header() {
       imgFiles.filter((x) => !x.name.includes("(")),
       json
     );
-    await startRender(
+    let state = await startRender(
       imgFiles.filter((x) => !x.name.includes("(")),
       json
     );
+    while (state != "comleted") {
+      state = await startRender(
+        imgFiles.filter((x) => !x.name.includes("(")),
+        json
+      );
+    }
     let isDownloading = false;
     let status = await checkVideo(`videoTime_${currentTime}`);
 

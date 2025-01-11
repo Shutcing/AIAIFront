@@ -156,7 +156,7 @@ export function AnimationMenu({ scale, currentObj }) {
             <span>
               {animationObjects[String(currentObjectId)]
                 ? Math.round(
-                    animationObjects[String(currentObjectId)][5] * 10
+                    Number(animationObjects[String(currentObjectId)][5]) * 10
                   ) / 10
                 : 0}
             </span>
