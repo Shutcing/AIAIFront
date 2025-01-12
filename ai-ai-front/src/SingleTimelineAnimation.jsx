@@ -20,6 +20,7 @@ export function SingleTimelineAnimation({ title, index, objectId }) {
       `#animation${index}and${animationObjects[String(objectId)][4]
         .replace(".", "")
         .replace("(", "")
+        .replace(" ", "")
         .replace(")", "")}`
     );
     if (_thisWrapper) {
@@ -35,6 +36,7 @@ export function SingleTimelineAnimation({ title, index, objectId }) {
     let _thisWrapper = document.querySelector(
       `#animation${index}and${animationObjects[String(objectId)][4]
         .replace(".", "")
+        .replace(" ", "")
         .replace("(", "")
         .replace(")", "")}`
     );
@@ -100,6 +102,7 @@ export function SingleTimelineAnimation({ title, index, objectId }) {
       id={`animation${index}and${animationObjects[String(objectId)][4]
         .replace(".", "")
         .replace("(", "")
+        .replace(" ", "")
         .replace(")", "")}`}
     >
       <div

@@ -39,7 +39,7 @@ export function Main() {
     const regex = /\(\d+\)/g;
 
     // Заменяем все найденные подстроки на пустую строку
-    return inputString.replace(regex, "").trim(); // Удаляем лишние пробелы в начале и конце
+    return inputString.replace(regex, "").trim().replace(" ", ""); // Удаляем лишние пробелы в начале и конце
   }
 
   // Функция, которая создаёт input для выбора файла
@@ -47,61 +47,93 @@ export function Main() {
     const input = document.createElement("input");
     input.type = "file";
     input.accept = "image/*";
-    input.onchange = (event) => {
+    input.onchange = async (event) => {
       const file = event.target.files[0];
       if (file) {
-        const imageUrl = URL.createObjectURL(file);
+        if (file.type === "image/svg+xml") {
+          // Конвертация SVG в PNG
+          const svgText = await file.text();
+          const img = new Image();
+          const blob = new Blob([svgText], { type: "image/svg+xml" });
+          const url = URL.createObjectURL(blob);
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
 
-        const tempImg = new Image();
-        tempImg.onload = () => {
-          const imgW = tempImg.width;
-          const imgH = tempImg.height;
+            // Вычисление размера с учётом плотности пикселей
+            const scaleFactor = 2;
+            canvas.width = img.width * scaleFactor;
+            canvas.height = img.height * scaleFactor;
 
-          setSelectedImages((prevImages) => [...prevImages, imageUrl]);
+            const ctx = canvas.getContext("2d");
+            ctx.scale(scaleFactor, scaleFactor);
+            ctx.drawImage(img, 0, 0);
 
-          // Проверка, нет ли уже файла с таким именем
-          const existingNames = imgFiles.map((f) => f.name);
-          if (existingNames.includes(file.name)) {
-            // Количество дублей (сколько раз именно такое имя уже встречалось)
-            const duplicatesCount = existingNames.filter(
-              (_name) => removeNumberSubstrings(_name) === file.name
-            ).length;
+            canvas.toBlob((pngBlob) => {
+              const pngFileName = file.name.replace(/\.svg$/i, ".png");
+              const pngFile = new File([pngBlob], pngFileName, {
+                type: "image/png",
+                lastModified: Date.now(),
+              });
 
-            // Генерируем новое имя, например: "img.png (1)"
-            const newFileName = `${file.name}(${duplicatesCount})`;
-
-            // Создаём новый объект File c новым именем
-            const renamedFile = new File([file], newFileName, {
-              type: file.type,
-              lastModified: file.lastModified,
-            });
-
-            setImgFiles((prev) => [...prev, renamedFile]);
-            addIsReadyToMove(false);
-
-            addAnimationObjects(
-              String(Object.keys(animationObjects).length),
-              newFileName,
-              imgW,
-              imgH
-            );
-          } else {
-            // Если имя не конфликтует, добавляем исходный file
-            setImgFiles((prevImages) => [...prevImages, file]);
-            addIsReadyToMove(false);
-
-            addAnimationObjects(
-              String(Object.keys(animationObjects).length),
-              file.name,
-              imgW,
-              imgH
-            );
-          }
-        };
-        tempImg.src = imageUrl;
+              // Добавление PNG в обработку
+              handleImageFile(pngFile, img.width, img.height);
+              URL.revokeObjectURL(url);
+            }, "image/png");
+          };
+          img.src = url;
+        } else {
+          const imageUrl = URL.createObjectURL(file);
+          const tempImg = new Image();
+          tempImg.onload = () => {
+            handleImageFile(file, tempImg.width, tempImg.height);
+          };
+          tempImg.src = imageUrl;
+        }
       }
     };
     input.click();
+  };
+
+  // Вспомогательная функция для обработки изображения
+  const handleImageFile = (file, imgW, imgH) => {
+    const imageUrl = URL.createObjectURL(file);
+
+    setSelectedImages((prevImages) => [...prevImages, imageUrl]);
+
+    // Проверка, нет ли уже файла с таким именем
+    const existingNames = imgFiles.map((f) => f.name);
+    if (existingNames.includes(file.name)) {
+      const duplicatesCount = existingNames.filter(
+        (_name) => removeNumberSubstrings(_name) === file.name
+      ).length;
+
+      const newFileName = `${file.name}(${duplicatesCount + 1})`;
+
+      const renamedFile = new File([file], newFileName, {
+        type: file.type,
+        lastModified: file.lastModified,
+      });
+
+      setImgFiles((prev) => [...prev, renamedFile]);
+      addIsReadyToMove(false);
+
+      addAnimationObjects(
+        String(Object.keys(animationObjects).length),
+        newFileName,
+        imgW,
+        imgH
+      );
+    } else {
+      setImgFiles((prevImages) => [...prevImages, file]);
+      addIsReadyToMove(false);
+
+      addAnimationObjects(
+        String(Object.keys(animationObjects).length),
+        file.name,
+        imgW,
+        imgH
+      );
+    }
   };
 
   // Если нажали "Добавить картинку", сразу открываем диалог выбора файла
@@ -220,6 +252,7 @@ export function Main() {
           <div className="notification__content">
             <p>После добавления анимации, нажимайте Enter</p>
             <p>Чтобы снять выделение с объекта, нажмите Enter :)</p>
+            <p>Чтобы установить цвет фона нажимайте Enter</p>
           </div>
         </div>
       )}
@@ -263,6 +296,7 @@ export function Main() {
                   <div className="layer__title">{animationObjects[ind][4]}</div>
                 </div>
               ))}
+              <div className="layers__buffer"></div>
             </div>
           </div>
         </div>

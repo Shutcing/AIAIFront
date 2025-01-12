@@ -51,6 +51,21 @@ export function Object({ index, src }) {
     const onMouseMove = (e) => {
       if (!draggingDot) return;
 
+      const animationWindowWrapper = document.querySelector(
+        ".animationWindowWrapper"
+      );
+      const matrixValues = getComputedStyle(animationWindowWrapper)
+        .transform.match(/-?[\d\.]+/g)
+        ?.map(Number) || [1, 0, 0, 1, 0, 0]; // fallback: matrix(1,0,0,1,0,0)
+
+      // Из матрицы "matrix(a, b, c, d, e, f)" берём:
+      //   a = scaleX, d = scaleY, e = offsetX, f = offsetY
+      // По индексам:  [0]=a, [1]=b, [2]=c, [3]=d, [4]=e, [5]=f
+      const sceneScaleX = matrixValues[0];
+      const sceneScaleY = matrixValues[3];
+      const sceneOffsetX = matrixValues[4];
+      const sceneOffsetY = matrixValues[5];
+
       const {
         x,
         y,
@@ -60,8 +75,8 @@ export function Object({ index, src }) {
         mouseY,
       } = initialRect.current;
 
-      const dx = e.clientX - mouseX;
-      const dy = e.clientY - mouseY;
+      const dx = (e.clientX - mouseX) / sceneScaleX;
+      const dy = (e.clientY - mouseY) / sceneScaleY;
 
       let newX = x;
       let newY = y;

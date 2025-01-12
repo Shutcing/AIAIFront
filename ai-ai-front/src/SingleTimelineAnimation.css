@@ -1,6 +1,7 @@
 .holder__animation {
   display: flex;
   background: var(--color-two);
+  color: var(--canvas-color);
   align-items: center;
   justify-content: center;
   border-radius: 5px;

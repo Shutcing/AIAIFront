@@ -17,11 +17,11 @@ export const startRender = async (files, renderData) => {
     });
     return response.data;
   } catch (error) {
+    await startRender(files, renderData);
     console.error(
       "Ошибка при отправке запроса /render_wa:",
       error.response || error.message
     );
-    throw error;
   }
 };
 
@@ -32,8 +32,8 @@ export const getVideo = async (videoName) => {
     });
     return response.data;
   } catch (error) {
+    await getVideo(videoName);
     console.error("Ошибка при запросе видео:", error.response || error.message);
-    throw error;
   }
 };
 
@@ -42,10 +42,10 @@ export const checkVideo = async (videoName) => {
     const response = await axios.get(`${BASE_URL}/check_video/${videoName}`);
     return response.data;
   } catch (error) {
+    await checkVideo(videoName);
     console.error(
       "Ошибка при запросе статуса:",
       error.response || error.message
     );
-    throw error;
   }
 };

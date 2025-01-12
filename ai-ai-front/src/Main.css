@@ -17,9 +17,9 @@
 /*--Layers--------------------------------*/
 .layers {
   padding: 10% 0 0 0;
-  height: 100%;
+  max-height: 80%;
   flex-direction: column;
-  width: 90%;
+  max-width: 90%;
   align-items: start;
 }
 
@@ -38,12 +38,14 @@
   flex-direction: column;
   width: 100%;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 .layers__layer {
 }
 .layer {
   margin-top: 10%;
   display: flex;
+  justify-content: start;
   align-items: center;
   width: 100%;
   cursor: pointer;
@@ -51,7 +53,7 @@
 .layer__icon {
   margin-right: 5%;
   cursor: pointer;
-  width: 4%;
+  width: 8px;
   height: 100%;
   display: flex;
   align-items: center;

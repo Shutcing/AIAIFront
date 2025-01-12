@@ -41,6 +41,7 @@ export function Scene({ selectedImages }) {
       const zoomIntensity = 0.01;
 
       if (isCtrlZoom) {
+        // Масштабирование (zoom in/out) вокруг точки, где находится курсор
         const rect = e.target.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
@@ -50,16 +51,18 @@ export function Scene({ selectedImages }) {
           3
         );
 
+        // При зуме сцены корректируем cameraOffset так, чтобы &laquo;визуально&raquo; зум происходил под курсором
         setCameraOffset((prev) => ({
           x: mouseX - ((mouseX - prev.x) / scale) * newScale,
           y: mouseY - ((mouseY - prev.y) / scale) * newScale,
         }));
         setScale(newScale);
       } else {
-        // Горизонтальная/вертикальная прокрутка
+        // Горизонтальная/вертикальная прокрутка (перемещение камеры)
+        // Убираем деление на scale, чтобы панорамирование ощущалось одинаково при любом масштабе
         setCameraOffset((prev) => ({
-          x: prev.x - e.deltaX / scale,
-          y: prev.y - e.deltaY / scale,
+          x: prev.x - e.deltaX,
+          y: prev.y - e.deltaY,
         }));
       }
     },
@@ -76,23 +79,28 @@ export function Scene({ selectedImages }) {
   };
 
   const handleMouseMove = (e) => {
+    // Перетаскиваем объект
     if (isDraggingObject !== null) {
-      // Двигаем конкретный объект
       const newAnimationObjects = { ...animationObjects };
       const currentObject = newAnimationObjects[String(isDraggingObject)];
 
       if (currentObject) {
+        // Объекты живут в &laquo;логических&raquo; координатах, поэтому делим дельту мыши на scale
         currentObject[1] = [
           offsetStart.current.x + (e.clientX - dragStart.current.x) / scale,
           offsetStart.current.y + (e.clientY - dragStart.current.y) / scale,
         ];
         setAnimationObjects(newAnimationObjects);
       }
-    } else if (isDraggingCanvas) {
-      // Двигаем камеру
+    }
+    // Перетаскиваем камеру
+    else if (isDraggingCanvas) {
+      // Здесь убираем деление на scale, чтобы панорамировать с одинаковой скоростью
+      const dx = e.clientX - dragStart.current.x;
+      const dy = e.clientY - dragStart.current.y;
       setCameraOffset({
-        x: cameraStart.current.x + (e.clientX - dragStart.current.x) / scale,
-        y: cameraStart.current.y + (e.clientY - dragStart.current.y) / scale,
+        x: cameraStart.current.x + dx,
+        y: cameraStart.current.y + dy,
       });
     }
   };
@@ -121,7 +129,6 @@ export function Scene({ selectedImages }) {
    * ============ СНЯТИЕ ВЫДЕЛЕНИЯ КЛИКОМ ПО ПУСТОМУ МЕСТУ ============
    */
   const setCurrentObjectIdNull = (e) => {
-    // Пример хитрого селектора, если у вас есть другие условия
     if (
       !document.querySelector(".choosePanel__opacityTools") &&
       e.target.className !== "object" &&
@@ -135,56 +142,51 @@ export function Scene({ selectedImages }) {
    * ============ ГЛОБАЛЬНАЯ ОБРАБОТКА CTRL+C / CTRL+V ============
    * Копируем &laquo;текущий объект&raquo; по currentObjectId, вставляем как новый.
    */
-
   function updateString(inputString) {
-    function removeNumberSubstrings(inputString) {
-      // Регулярное выражение для поиска подстрок в формате "(число)"
-      const regex = /\(\d+\)/g;
-
-      // Заменяем все найденные подстроки на пустую строку
-      return inputString.replace(regex, "").trim(); // Удаляем лишние пробелы в начале и конце
+    function removeNumberSubstrings(input) {
+      // Регулярное выражение для удаления подстрок в формате "(число)"
+      const regex = /\(\d+\)$/; // Находит строки, заканчивающиеся на "(число)"
+      return input.replace(regex, "").trim();
     }
-    // Используем регулярное выражение для поиска подстроки вида "(число)"
-    const regex = /\((\d+)\)/;
-    const match = inputString.match(regex);
 
-    // Если подстрока найдена, извлекаем старое число и увеличиваем его на 1
-    const newNumber = imgFiles
+    // Поиск дубликатов
+    const baseName = removeNumberSubstrings(inputString);
+
+    const existingFiles = imgFiles
       .map((f) => f.name)
-      .filter((_name) => {
-        console.log(
-          removeNumberSubstrings(_name),
-          removeNumberSubstrings(inputString)
-        );
-        return (
-          removeNumberSubstrings(_name) === removeNumberSubstrings(inputString)
-        );
-      }).length;
-    // Создаём новый объект File c новым именем
-    let newFileName = match
-      ? inputString.replace(regex, `(${newNumber})`)
-      : `${inputString}(${newNumber})`;
+      .filter((name) => removeNumberSubstrings(name) === baseName);
+
+    // Определяем новый номер дубликата
+    const newNumber = existingFiles.length + 1;
+
+    // Создаём новое имя файла
+    const newFileName = `${baseName}(${newNumber})`;
+
+    // Создаём объект файла с новым именем
     const renamedFile = new File(
-      imgFiles.map(
-        (f) =>
-          removeNumberSubstrings(f.name) === removeNumberSubstrings(newFileName)
-      ),
-      newFileName
+      [
+        /* содержимое файла */
+      ],
+      newFileName,
+      {
+        type: "image/png", // Укажите правильный MIME-тип
+        lastModified: Date.now(),
+      }
     );
+
+    // Обновляем состояние imgFiles
     setImgFiles((prev) => [...prev, renamedFile]);
-    console.log(newNumber);
-    return newFileName; // Заменяем старое число на новое
+
+    return newFileName;
   }
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       // Ctrl + C
       if (e.ctrlKey && e.key === "c") {
-        // Проверяем, выбран ли вообще какой-то объект
         if (currentObjectId != null) {
           const originalObj = animationObjects[String(currentObjectId)];
           if (originalObj) {
-            // Делаем копию массивом/объектом (глубокую или частично глубокую)
             let copiedArr = [...originalObj];
             if (copiedArr[0]) copiedArr[0] = [...copiedArr[0]];
             if (copiedArr[1]) copiedArr[1] = [...copiedArr[1]];
@@ -203,20 +205,12 @@ export function Scene({ selectedImages }) {
 
       // Ctrl + V
       if (e.ctrlKey && e.key === "v") {
-        // Если есть что вставлять
         if (copiedObject) {
-          // alert("woow");
-          // Создаём новую запись в animationObjects
           const newIndex = Object.keys(animationObjects).length;
-
-          // Добавим копию изображения в selectedImages
-          // (Чтобы новый объект тоже имел свою "привязку" к картинке)
           const newImages = [...selectedImages];
           newImages.push(copiedObject.imageUrl);
 
-          // Готовим новый объект, слегка смещаем координаты
           let newData = [...copiedObject.data];
-          // Сдвигаем, чтобы не было точного наложения
           newData[1] = [
             copiedObject.data[1][0] + 30, // смещение X
             copiedObject.data[1][1] + 30, // смещение Y
@@ -225,17 +219,8 @@ export function Scene({ selectedImages }) {
           const newAnimationObjects = { ...animationObjects };
           newAnimationObjects[String(newIndex)] = newData;
 
-          // Обновляем стейт
           setAnimationObjects(newAnimationObjects);
-          // И обязательно обновляем selectedImages, чтобы сцена отрисовала новый объект
-          // (так как map в Scene идёт по selectedImages)
           setCurrentObjectId(newIndex);
-          // Важное: если ваш код ждёт, что кол-во animationObjects === длине selectedImages,
-          // они должны совпадать по индексу.
-          // Потому мы тоже кладём копию изображения в конец массива.
-          // Либо делайте свою логику, если иначе.
-
-          // ВАЖНО: Вызываем setSelectedImages после вставки
           setSelectedImages(newImages);
           addIsReadyToMove(false);
         }
@@ -300,9 +285,7 @@ export function Scene({ selectedImages }) {
           );
         })}
 
-        {/**
-         * Отдельно отрисовываем AnimationMenu для текущего объекта
-         */}
+        {/* Отдельно отрисовываем AnimationMenu для текущего объекта */}
         <div
           className="sceneContent"
           style={{

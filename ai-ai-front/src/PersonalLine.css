@@ -9,6 +9,7 @@
 .personal-line__title {
   padding: 1%;
   background: var(--timeline-color);
+  overflow-x: hidden;
 }
 
 .personal-line__algebra {
